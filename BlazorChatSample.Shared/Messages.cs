@@ -20,5 +20,13 @@
         /// </summary>
         public const string SEND = "SendMessage";
 
+        public const string PICKED = "Picked";
+        public const string UNPICKED = "Unpicked";
+        public const string CLAIMED = "Claimed";
+        public const string OFFERED = "Offered";
+        public const string NUMCARDS = "NumCards";
+        public const string DEALING = "Dealing";
+        public const string TRADING = "Trading";
+
     }
 }
