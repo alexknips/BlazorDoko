@@ -244,7 +244,7 @@ namespace BlazorChatSample.Server
         {
             string sHand = "";
             foreach (Card c in hand)
-                sHand += c.GetCardName() + "|";
+                sHand += c.ToString() + "|";
             if(sHand.Length > 1)
                 return sHand.Substring(0, sHand.Length - 1);
             return "";
