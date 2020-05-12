@@ -86,7 +86,7 @@ namespace BlazorChatSample.Shared
             }
             public override string ToString()
             {
-                return msgType.ToString() + "|" + playername + "|" + card.ToString();
+                return ((int)msgType).ToString() + "|" + playername + "|" + card.ToString();
             }
         }
         
@@ -112,7 +112,7 @@ namespace BlazorChatSample.Shared
             }
             public override string ToString()
             {
-                return msgType.ToString() + "|" + playername + "|" + card.ToString();
+                return ((int)msgType).ToString() + "|" + playername + "|" + card.ToString();
             }
         }
 
@@ -128,7 +128,7 @@ namespace BlazorChatSample.Shared
             }
             public override string ToString()
             {
-                return msgType.ToString() + "|" + playername;
+                return ((int)msgType).ToString() + "|" + playername;
             }
         }
 
@@ -148,7 +148,7 @@ namespace BlazorChatSample.Shared
             }
             public override string ToString()
             {
-                return msgType.ToString() + "|" + numCards.ToString();
+                return ((int)msgType).ToString() + "|" + numCards.ToString();
             }
         }
         
@@ -168,7 +168,7 @@ namespace BlazorChatSample.Shared
             }
             public override string ToString()
             {
-                return msgType.ToString() + "|" + Server.Deck.HandToString(hand);
+                return ((int)msgType).ToString() + "|" + Server.Deck.HandToString(hand);
             }
         }
         
@@ -180,7 +180,7 @@ namespace BlazorChatSample.Shared
             public MessageReqDealing(){}
             public override string ToString()
             {
-                return msgType.ToString();
+                return ((int)msgType).ToString();
             }
         }
         
@@ -209,7 +209,7 @@ namespace BlazorChatSample.Shared
             }
             public override string ToString()
             {
-                return msgType.ToString() + "|" + playerFrom + "|" + playerTo + "|" + card.ToString();
+                return ((int)msgType).ToString() + "|" + playerFrom + "|" + playerTo + "|" + card.ToString();
             }
         }
     }
