@@ -27,7 +27,8 @@ namespace BlazorChatSample.Shared
         public const string CLAIMED = "Claimed";
         public const string OFFERED = "Offered";
         public const string NUMCARDS = "NumCards";
-        public const string DEALING = "Dealing";
+        public const string DEALING = "Dealing";        
+        public const string REQDEALING = "ReqDealing";
         public const string TRADING = "Trading";
 
         public static Message DecodeMessage(string message)
@@ -167,6 +168,18 @@ namespace BlazorChatSample.Shared
             public override string ToString()
             {
                 return messageType + "|" + Server.Deck.HandToString(hand);
+            }
+        }
+        
+        /// <summary>
+        /// request a new dealing
+        /// </summary>
+        public class MessageReqDealing : Message{
+            public const string messageType = REQDEALING;
+            public MessageReqDealing(){}
+            public override string ToString()
+            {
+                return messageType;
             }
         }
         
