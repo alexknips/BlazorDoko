@@ -22,33 +22,34 @@ namespace BlazorChatSample.Shared
         /// </summary>
         public const string SEND = "SendMessage";
 
-        public const string PICKED = "Picked";
-        public const string UNPICKED = "Unpicked";
-        public const string CLAIMED = "Claimed";
-        public const string OFFERED = "Offered";
-        public const string NUMCARDS = "NumCards";
-        public const string DEALING = "Dealing";        
-        public const string REQDEALING = "ReqDealing";
-        public const string TRADING = "Trading";
+
+        public enum messageType
+        {PICKED,UNPICKED,CLAIMED,OFFERED,NUMCARDS,DEALING,REQDEALING,TRADING};
 
         public static Message DecodeMessage(string message)
         {
             if(!message.Contains("|"))
                 return new MessageFailed();
-            string msgtype = message.Split('|')[0];
-            message = message.Substring(message.IndexOf("|")+1);
-            switch(msgtype)
+            try{
+                messageType msgtype = (messageType)int.Parse(message.Split('|')[0]);
+                message = message.Substring(message.IndexOf("|")+1);
+                switch(msgtype)
+                {
+                    case messageType.PICKED:
+                        return new MessagePicked(message);
+                    case messageType.UNPICKED:
+                        return new MessageUnpicked(message);
+                    case messageType.NUMCARDS:
+                        return new MessageNumCards(message);
+                    case messageType.DEALING:
+                        return new MessageDealing(message);
+                    default:
+                        return new MessageFailed();
+                }
+            }
+            catch
             {
-                case PICKED:
-                    return new MessagePicked(message);
-                case UNPICKED:
-                    return new MessageUnpicked(message);
-                case NUMCARDS:
-                    return new MessageNumCards(message);
-                case DEALING:
-                    return new MessageDealing(message);
-                default:
-                    return new MessageFailed();
+                return new MessageFailed();
             }
         }
 
@@ -67,7 +68,7 @@ namespace BlazorChatSample.Shared
         /// a player picked a card, containing playername and card identifier
         /// </summary>
         public class MessagePicked : Message{
-            public const string messageType = PICKED;
+            public const messageType msgType = messageType.PICKED;
             public string playername;
             public Server.Card card;
             public MessagePicked(string msg)
@@ -85,7 +86,7 @@ namespace BlazorChatSample.Shared
             }
             public override string ToString()
             {
-                return messageType + "|" + playername + "|" + card.ToString();
+                return msgType.ToString() + "|" + playername + "|" + card.ToString();
             }
         }
         
@@ -93,7 +94,7 @@ namespace BlazorChatSample.Shared
         /// a player withdrew a card, containing playername and card identifier
         /// </summary>
         public class MessageUnpicked : Message{
-            public const string messageType = UNPICKED;
+            public const messageType msgType = messageType.UNPICKED;
             public string playername;
             public Server.Card card;
             public MessageUnpicked(string msg)
@@ -111,7 +112,7 @@ namespace BlazorChatSample.Shared
             }
             public override string ToString()
             {
-                return messageType + "|" + playername + "|" + card.ToString();
+                return msgType.ToString() + "|" + playername + "|" + card.ToString();
             }
         }
 
@@ -119,7 +120,7 @@ namespace BlazorChatSample.Shared
         /// a player claimed the trick, containing playername
         /// </summary>
         public class MessageClaimed : Message{
-            public const string messageType = CLAIMED;
+            public const messageType msgType = messageType.CLAIMED;
             public string playername;
             public MessageClaimed(string playername) // both ctor's have same signature
             {
@@ -127,7 +128,7 @@ namespace BlazorChatSample.Shared
             }
             public override string ToString()
             {
-                return messageType + "|" + playername;
+                return msgType.ToString() + "|" + playername;
             }
         }
 
@@ -135,7 +136,7 @@ namespace BlazorChatSample.Shared
         /// telling the players how many card they get
         /// </summary>
         public class MessageNumCards : Message{
-            public const string messageType = NUMCARDS;
+            public const messageType msgType = messageType.NUMCARDS;
             public int numCards;
             public MessageNumCards(string msg)
             {
@@ -147,7 +148,7 @@ namespace BlazorChatSample.Shared
             }
             public override string ToString()
             {
-                return messageType + "|" + numCards.ToString();
+                return msgType.ToString() + "|" + numCards.ToString();
             }
         }
         
@@ -155,7 +156,7 @@ namespace BlazorChatSample.Shared
         /// dealing a hand a player, containing playername and list of cards
         /// </summary>
         public class MessageDealing : Message{
-            public const string messageType = DEALING;
+            public const messageType msgType = messageType.DEALING;
             public List<Server.Card> hand;
             public MessageDealing(string msg)
             {
@@ -167,7 +168,7 @@ namespace BlazorChatSample.Shared
             }
             public override string ToString()
             {
-                return messageType + "|" + Server.Deck.HandToString(hand);
+                return msgType.ToString() + "|" + Server.Deck.HandToString(hand);
             }
         }
         
@@ -175,11 +176,11 @@ namespace BlazorChatSample.Shared
         /// request a new dealing
         /// </summary>
         public class MessageReqDealing : Message{
-            public const string messageType = REQDEALING;
+            public const messageType msgType = messageType.REQDEALING;
             public MessageReqDealing(){}
             public override string ToString()
             {
-                return messageType;
+                return msgType.ToString();
             }
         }
         
@@ -187,7 +188,7 @@ namespace BlazorChatSample.Shared
         /// invoked when a player trades a card with another one ("poverty of trumps"/"Trumpfabgabe")
         /// </summary>
         public class MessageCardOffered : Message{
-            public const string messageType = OFFERED;
+            public const messageType msgType = messageType.OFFERED;
             public string playerFrom;
             public string playerTo;
             public Server.Card card;
@@ -208,7 +209,7 @@ namespace BlazorChatSample.Shared
             }
             public override string ToString()
             {
-                return messageType + "|" + playerFrom + "|" + playerTo + "|" + card.ToString();
+                return msgType.ToString() + "|" + playerFrom + "|" + playerTo + "|" + card.ToString();
             }
         }
     }
