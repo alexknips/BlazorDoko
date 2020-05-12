@@ -47,6 +47,13 @@
     {
         <div id="scrollbox">
 
+            @for (var i = 0;i<cards.Count;i++)
+            { // just make the cards as a like of buttons
+                @* <button class="btn btn-default" @onclick="@ClickCard">@cards[i].ToString()</button> *@
+                var cardIdx = i;
+                <input type="image" src="cards/@(cards[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
+            }
+
             @foreach (var item in messages)
             {
                 <div class="@item.CSS">
@@ -59,12 +66,6 @@
             <button class="btn btn-default" @onclick="@SendAsync">Send</button>
             <button class="btn btn-default" @onclick="@Dealing">Deal</button>
             
-            @for (var i = 0;i<cards.Count;i++)
-            { // just make the cards as a like of buttons
-                @* <button class="btn btn-default" @onclick="@ClickCard">@cards[i].ToString()</button> *@
-                var cardIdx = i;
-                <input type="image" src="cards/@(cards[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
-            }
         </div>
     }
 </div>
@@ -161,11 +162,12 @@
         }
     }
 
-    void ClickCard(int idx)
+    async Task ClickCard(int idx)
     {
         //message = cards[idx].ToString() + " was selected";
         message = "a card was clicked: " + cards[idx].ToString();
         Console.WriteLine(message);
+        await client.SendAsync(new BlazorChatSample.Shared.Messages.MessagePicked(username,cards[idx]).ToString());
     }
 
     async Task Dealing()
