@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace BlazorChatSample.Server
 {
-    enum CardColor
+    public enum CardColor
     {
         Clovers, Pikes, Hearts, Tiles
     }
-    enum CardType
+    public enum CardType
     {
         Nine, Jack, Queen, King, Ten, Ace
     }
 
-    class Card
+    public class Card
     {
         private CardColor cardColor;
         private CardType cardType;
@@ -195,7 +195,7 @@ namespace BlazorChatSample.Server
         }
     }
 
-    class Deck
+    public class Deck
     {
         private List<Card> cards;
 
@@ -248,6 +248,14 @@ namespace BlazorChatSample.Server
             if(sHand.Length > 1)
                 return sHand.Substring(0, sHand.Length - 1);
             return "";
+        }
+        public static List<Card> StringToHand(string hand)
+        {
+            string[] sCards = hand.Split('|');
+            List<Card> cards = new List<Card>();
+            foreach (string c in sCards)
+                cards.Add(new Card(c));
+            return cards;
         }
 
         public int NumCardsPerPerson()
