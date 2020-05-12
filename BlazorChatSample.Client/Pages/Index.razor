@@ -6,10 +6,6 @@
     @if (playing)
     {
         <p>You are connected as <b>@username</b></p>
-        @if(hosting)
-        {
-            <p>(hosting)</p>
-        }
         <button class="btn btn-sm btn-warning ml-md-auto" @onclick="@DisconnectAsync">Disconnect</button>
     }
 </div>
@@ -147,6 +143,8 @@
         var newMsg = new Message(e.Username, e.Message, isMine);
         messages.Add(newMsg);
 
+        BlazorChatSample.Shared.Messages.Message msg = BlazorChatSample.Shared.Messages.DecodeMessage(e.Message);
+        Console.WriteLine(msg.GetType());
         // Inform blazor the UI needs updating
         StateHasChanged();
     }

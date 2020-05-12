@@ -8,17 +8,6 @@ to create a Doppelkopf [Blazor](https://blazor.net/) application.
 
 This is a fork of https://github.com/conficient/BlazorChatSample.
 
-### Now JavaScript-Free!
-
-library which is now compatible with the Mono WASM runtime. This really simplifies the 
-`ChatClient` code.
-
-Previously this sample used JavaScript SignalR client. If you want to see how the JavaScript client version worked, I've retained 
-it in [this branch](https://github.com/conficient/BlazorChatSample/tree/netcore-3.2.0-preview1)
-
-## Demo
-A demo application is available at TODO
-
 ### Improvements & Suggestions
 If you have any improvements or suggestions please submit as issues/pull requests on the Github repo.
 
