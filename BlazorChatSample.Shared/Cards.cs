@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlazorChatSample.Server
+namespace BlazorChatSample.Shared
 {
     public enum CardColor
     {
@@ -213,6 +213,8 @@ namespace BlazorChatSample.Server
             }
         }
         private static Random rng = new Random();
+
+        // Fisher-Yates shuffle
         public void Shuffle()
         {
             int n = cards.Count;
@@ -240,23 +242,23 @@ namespace BlazorChatSample.Server
             return hand;
         }
 
-        public static string HandToString(List<Card> hand)
-        {
-            string sHand = "";
-            foreach (Card c in hand)
-                sHand += c.ToString() + "|";
-            if(sHand.Length > 1)
-                return sHand.Substring(0, sHand.Length - 1);
-            return "";
-        }
-        public static List<Card> StringToHand(string hand)
-        {
-            string[] sCards = hand.Split('|');
-            List<Card> cards = new List<Card>();
-            foreach (string c in sCards)
-                cards.Add(new Card(c));
-            return cards;
-        }
+        // public static string HandToString(List<Card> hand)
+        // {
+        //     string sHand = "";
+        //     foreach (Card c in hand)
+        //         sHand += c.ToString() + "|";
+        //     if(sHand.Length > 1)
+        //         return sHand.Substring(0, sHand.Length - 1);
+        //     return "";
+        // }
+        // public static List<Card> StringToHand(string hand)
+        // {
+        //     string[] sCards = hand.Split('|');
+        //     List<Card> cards = new List<Card>();
+        //     foreach (string c in sCards)
+        //         cards.Add(new Card(c));
+        //     return cards;
+        // }
 
         public int NumCardsPerPerson()
         {

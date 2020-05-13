@@ -84,7 +84,10 @@
 
     // list of messages in chat
     List<Message> messages = new List<Message>();
-    List<Server.Card> cards = new List<Server.Card>();
+    List<Card> cards = new List<Card>();
+
+    // current gameState of the client
+    GameState gameState = null;
 
     /// <summary>
     /// Start chat client
@@ -115,8 +118,8 @@
 
             playing = true;
 
-            cards.Add(new Server.Card("AH"));
-            cards.Add(new Server.Card("9S"));
+            cards.Add(new Card("AH"));
+            cards.Add(new Card("9S"));
         }
         catch (Exception e)
         {
@@ -143,8 +146,6 @@
         var newMsg = new Message(e.Username, e.Message, isMine);
         messages.Add(newMsg);
 
-        BlazorChatSample.Shared.Messages.Message msg = BlazorChatSample.Shared.Messages.DecodeMessage(e.Message);
-        Console.WriteLine(msg.GetType());
         // Inform blazor the UI needs updating
         StateHasChanged();
     }
@@ -160,17 +161,19 @@
         }
     }
 
+    void UpdateGameState(BlazorChatSample.Shared.GameState newGamestate)
+    {
+        gameState = newGamestate;
+    }
+
     async Task ClickCard(int idx)
     {
-        //message = cards[idx].ToString() + " was selected";
-        message = "a card was clicked: " + cards[idx].ToString();
-        Console.WriteLine(message);
-        await client.SendAsync(new BlazorChatSample.Shared.Messages.MessagePicked(username,cards[idx]).ToString());
+        await client.PlayCard(cards[idx]);
     }
 
     async Task Dealing()
     {
-        await client.SendAsync(new BlazorChatSample.Shared.Messages.MessageReqDealing().ToString());
+        await client.ReqDealing(true);
     }
 
     async Task SendAsync()

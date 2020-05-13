@@ -84,6 +84,25 @@ namespace BlazorChatSample.Shared
         /// </summary>
         /// <param name="method">event name</param>
         /// <param name="message">message content</param>
+        private void HandleGameUpdate(string username, string message)
+        {
+            // raise an event to subscribers
+            GameUpdateReceived?.Invoke(this, new MessageReceivedEventArgs(username, message));
+        }
+
+        /// <summary>
+        /// Event raised when this client receives a message
+        /// </summary>
+        /// <remarks>
+        /// Instance classes should subscribe to this event
+        /// </remarks>
+        public event MessageReceivedEventHandler GameUpdateReceived;
+
+        /// <summary>
+        /// Handle an inbound message from a hub
+        /// </summary>
+        /// <param name="method">event name</param>
+        /// <param name="message">message content</param>
         private void HandleReceiveMessage(string username, string message)
         {
             // raise an event to subscribers
@@ -110,6 +129,15 @@ namespace BlazorChatSample.Shared
             // send the message
             await _hubConnection.SendAsync(Messages.SEND, _username, message);
         }
+
+        public async Task PlayCard(Card card){
+            await _hubConnection.SendAsync(Messages.PLAYCARD, _username, card);
+        }
+
+        public async Task ReqDealing(bool withNines = true){
+            await _hubConnection.SendAsync(Messages.REQDEALING, _username, withNines);
+        }
+        
 
         /// <summary>
         /// Stop the client (if started)
@@ -166,6 +194,23 @@ namespace BlazorChatSample.Shared
         /// </summary>
         public string Message { get; set; }
 
+    }
+
+    
+    /// <summary>
+    /// Delegate for the gameUpdate handler
+    /// </summary>
+    /// <param name="sender">the SignalRclient instance</param>
+    /// <param name="e">Event args</param>
+    public delegate void GameUpdateEventHandler(object sender, GameUpdateEventArgs e);
+
+    public class GameUpdateEventArgs : EventArgs
+    {
+        public GameUpdateEventArgs(GameState newGameState)
+        {
+            GameState = newGameState;
+        }
+        public GameState GameState { get; set; }
     }
 
 }

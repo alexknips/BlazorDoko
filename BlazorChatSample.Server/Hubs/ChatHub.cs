@@ -21,6 +21,9 @@ namespace BlazorChatSample.Server.Hubs
         /// </remarks>
         private static readonly Dictionary<string, string> userLookup = new Dictionary<string, string>();
 
+        private static GameState gameState;
+
+
         /// <summary>
         /// Send a message to all clients
         /// </summary>
@@ -30,6 +33,54 @@ namespace BlazorChatSample.Server.Hubs
         public async Task SendMessage(string username, string message)
         {
             await Clients.All.SendAsync(Messages.RECEIVE, username, message);
+        }
+
+        // Request handout/dealing
+        public async Task RequestDealing(string usernameDealer, bool bWithNines)
+        {
+            // 1. calculate GameState
+            gameState = new GameState(usernameDealer, userLookup.Values.ToList(), bWithNines);
+            // 2. return new GameState
+            await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
+        }
+        // Play card
+        public async Task PlayCard(string username, string card)
+        {
+            // 1. calculate GameState
+            gameState.CardPlayed(username, new Card(card));
+            // 2. return new GameState
+            await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
+        }
+
+        // Take/withdraw card
+        public async Task WithdrawCard(string username)
+        {
+            // 1. calculate GameState
+            gameState.CardWithdrawn(username);
+            // 2. return new GameState
+            await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
+        }
+        // Claim trick
+        public async Task ClaimTrick(string username)
+        {
+            // 1. calculate GameState
+            gameState.TrickClaimed(username);
+            // 2. return new GameState
+            await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
+        }
+
+        // Offer card to another player
+        public async Task OfferCard(string username, string receivingUser, string card)
+        {
+            // 1. calculate GameState
+            gameState.CardOffered(username, receivingUser, new Card(card));
+            // 2. return new GameState
+            await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
+        }
+
+        public async Task UpdateGameState(string temp)
+        {
+            throw new NotImplementedException("");
         }
 
         /// <summary>
