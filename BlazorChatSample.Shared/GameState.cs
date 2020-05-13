@@ -19,7 +19,12 @@ namespace BlazorChatSample.Shared
             List<string> activePlayers = new List<string>();
             if (allusers.Count < 4)
             {
-                throw new System.InvalidOperationException("at least 4 players required");
+                // only for debugging purposes!
+                activePlayers = allusers;
+                int idxDealer = allusers.IndexOf(dealerUsername);
+                int idxStartingPlayer = 0;
+                StartingPlayer = activePlayers[idxStartingPlayer];
+                // throw new System.InvalidOperationException("at least 4 players required");
             }
             else if (allusers.Count == 4)
             {
@@ -32,24 +37,33 @@ namespace BlazorChatSample.Shared
             {
                 activePlayers = allusers;
                 int idxDealer = allusers.IndexOf(dealerUsername);
+                StartingPlayer = activePlayers[(idxDealer+1)%5];
                 activePlayers.Remove(dealerUsername);
-                int idxStartingPlayer = idxDealer % 4;
-                StartingPlayer = activePlayers[idxStartingPlayer];
             }
-            else if (allusers.Count >= 6)
+            else if (allusers.Count == 6)
             {
-                throw new System.NotImplementedException("will follow soon...");
+                activePlayers = allusers;
+                int idxDealer = allusers.IndexOf(dealerUsername);
+                string otherPassingPlayer = allusers[(idxDealer +3)%6];
+                StartingPlayer = activePlayers[(idxDealer+1)%6];
+                activePlayers.Remove(dealerUsername);
+                activePlayers.Remove(otherPassingPlayer);
             }
-
+            else if (allusers.Count >= 7)
+            {
+                throw new System.NotImplementedException("might follow some day...");
+            }
 
             var deck = new Shared.Deck(bWithNines);
 
             CurrentTrick = new Dictionary<string, Card>();
-            for (int i = 0; i < 4; i++)
+            LastTrick  = new Dictionary<string, Card>();
+            for (int i = 0; i < activePlayers.Count; i++)
             {
                 var gameStatePlayer = new PlayerGameState(deck.GetCardsForPlayer(i));
                 PlayerStates.Add(activePlayers[i], gameStatePlayer);
                 CurrentTrick.Add(activePlayers[i], null);
+                LastTrick.Add(activePlayers[i], null);
             }
         }
 
