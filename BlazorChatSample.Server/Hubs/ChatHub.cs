@@ -41,7 +41,9 @@ namespace BlazorChatSample.Server.Hubs
             // 1. calculate GameState
             gameState = new GameState(usernameDealer, userLookup.Values.ToList(), bWithNines);
             // 2. return new GameState
-            await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
+            // await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
+            
+            await Clients.All.SendAsync("testmsg", gameState);
         }
         // Play card
         public async Task PlayCard(string username, string card)
@@ -78,9 +80,9 @@ namespace BlazorChatSample.Server.Hubs
             await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
         }
 
-        public async Task UpdateGameState(string temp)
+        public async Task UpdateGameState()
         {
-            throw new NotImplementedException("");
+            await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
         }
 
         /// <summary>

@@ -59,6 +59,7 @@ namespace BlazorChatSample.Shared
                 // create the connection using the .NET SignalR client
                 _hubConnection = new HubConnectionBuilder()
                     .WithUrl(_hubUrl)
+                    // .WithAutomaticReconnect()
                     .Build();
                 Console.WriteLine("ChatClient: calling Start()");
 
@@ -66,6 +67,13 @@ namespace BlazorChatSample.Shared
                 _hubConnection.On<string, string>(Messages.RECEIVE, (user, message) =>
                  {
                      HandleReceiveMessage(user, message);
+                 });
+
+                // add handler for receiving messages
+                _hubConnection.On<GameState>(Messages.UPDATEGAMESTATE, (gamestate) =>
+                 {
+                     // TODO: sending a gamestate does not work. find fix
+                     HandleGameUpdate(gamestate);
                  });
 
                 // start the connection
@@ -84,29 +92,21 @@ namespace BlazorChatSample.Shared
         /// </summary>
         /// <param name="method">event name</param>
         /// <param name="message">message content</param>
-        private void HandleGameUpdate(string username, string message)
-        {
-            // raise an event to subscribers
-            GameUpdateReceived?.Invoke(this, new MessageReceivedEventArgs(username, message));
-        }
-
-        /// <summary>
-        /// Event raised when this client receives a message
-        /// </summary>
-        /// <remarks>
-        /// Instance classes should subscribe to this event
-        /// </remarks>
-        public event MessageReceivedEventHandler GameUpdateReceived;
-
-        /// <summary>
-        /// Handle an inbound message from a hub
-        /// </summary>
-        /// <param name="method">event name</param>
-        /// <param name="message">message content</param>
         private void HandleReceiveMessage(string username, string message)
         {
             // raise an event to subscribers
             MessageReceived?.Invoke(this, new MessageReceivedEventArgs(username, message));
+        }
+
+        /// <summary>
+        /// Handle an inbound gamestate message from a hub
+        /// </summary>
+        /// <param name="gameState">the new game state (which is then to parse)</param>
+        private void HandleGameUpdate(GameState gameState)
+        {
+            Console.WriteLine("handling");
+            // raise an event to subscribers
+            GameUpdateReceived?.Invoke(this, new GameUpdateEventArgs(gameState));
         }
 
         /// <summary>
@@ -116,6 +116,7 @@ namespace BlazorChatSample.Shared
         /// Instance classes should subscribe to this event
         /// </remarks>
         public event MessageReceivedEventHandler MessageReceived;
+        public event GameUpdateEventHandler GameUpdateReceived;
 
         /// <summary>
         /// Send a message to the hub
@@ -172,6 +173,13 @@ namespace BlazorChatSample.Shared
     /// <param name="sender">the SignalRclient instance</param>
     /// <param name="e">Event args</param>
     public delegate void MessageReceivedEventHandler(object sender, MessageReceivedEventArgs e);
+    
+    /// <summary>
+    /// Delegate for the gameUpdate handler
+    /// </summary>
+    /// <param name="sender">the SignalRclient instance</param>
+    /// <param name="e">Event args</param>
+    public delegate void GameUpdateEventHandler(object sender, GameUpdateEventArgs e);
 
     /// <summary>
     /// Message received argument class
@@ -196,13 +204,6 @@ namespace BlazorChatSample.Shared
 
     }
 
-    
-    /// <summary>
-    /// Delegate for the gameUpdate handler
-    /// </summary>
-    /// <param name="sender">the SignalRclient instance</param>
-    /// <param name="e">Event args</param>
-    public delegate void GameUpdateEventHandler(object sender, GameUpdateEventArgs e);
 
     public class GameUpdateEventArgs : EventArgs
     {

@@ -11,6 +11,10 @@ namespace BlazorChatSample.Shared
         /// Event name when a message is received
         /// </summary>
         public const string RECEIVE = "ReceiveMessage";
+        /// <summary>
+        /// Event name when an update game state event is received
+        /// </summary>
+        public const string UPDATEGAMESTATE = "UpdateGameState";
 
         /// <summary>
         /// Name of the Hub method to register a new user
@@ -22,7 +26,6 @@ namespace BlazorChatSample.Shared
         /// </summary>
         public const string SEND = "SendMessage";
 
-        public const string UPDATEGAMESTATE = "UpdateGameState";
 
         public const string PLAYCARD = "PlayCard";
         public const string WITHDRAWCARD = "WithdrawCard";

@@ -58,6 +58,7 @@ namespace BlazorChatSample.Shared
 
             CurrentTrick = new Dictionary<string, Card>();
             LastTrick  = new Dictionary<string, Card>();
+            PlayerStates = new Dictionary<string, PlayerGameState>();
             for (int i = 0; i < activePlayers.Count; i++)
             {
                 var gameStatePlayer = new PlayerGameState(deck.GetCardsForPlayer(i));
@@ -123,8 +124,8 @@ namespace BlazorChatSample.Shared
 
     public class PlayerGameState
     {
-        public List<Card> Hand { get; set; }
-        public int Points { get; set; }
+        public List<Card> Hand { get; set; }    // probably, no set required
+        public int Points { get; set; }         // probably, no set required
 
         public PlayerGameState()
         {

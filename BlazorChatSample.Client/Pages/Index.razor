@@ -111,6 +111,7 @@
             client = new ChatClient(username, baseUrl);
             // add an event handler for incoming messages
             client.MessageReceived += MessageReceived;
+            client.GameUpdateReceived += UpdateGameState;
             // start the client
             Console.WriteLine("Index: chart starting...");
             await client.StartAsync();
@@ -161,9 +162,12 @@
         }
     }
 
-    void UpdateGameState(BlazorChatSample.Shared.GameState newGamestate)
+    void UpdateGameState(object sender, GameUpdateEventArgs e)
     {
-        gameState = newGamestate;
+        Console.WriteLine($"Blazor: receive update game state");
+        gameState = e.GameState;
+        cards = gameState.PlayerStates[username].Hand;
+        StateHasChanged();
     }
 
     async Task ClickCard(int idx)
