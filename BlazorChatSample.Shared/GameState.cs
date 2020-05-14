@@ -26,6 +26,10 @@ namespace BlazorChatSample.Shared
             {
                 // only for debugging purposes!
                 activePlayers = allusers;
+                for(int i=allusers.Count;i<4;i++)
+                {
+                    activePlayers.Add("player " + (i+1).ToString());
+                }
                 int idxDealer = allusers.IndexOf(dealerUsername);
                 int idxStartingPlayer = 0;
                 StartingPlayer = activePlayers[idxStartingPlayer];
@@ -87,6 +91,24 @@ namespace BlazorChatSample.Shared
                 CurrentTrick[players] = null;
             }
             PlayerStates[claimingPlayer].Points += valueOfTrick;
+
+            int? numCards = null;
+            foreach(string player in PlayerStates.Keys)
+                if(numCards == 0)
+                    numCards = PlayerStates[player].Hand.Count;
+                else if(PlayerStates[player].Hand.Count != numCards)
+                    throw new System.Exception("number of cards of players differ");
+
+            if(numCards == 0) // all cards had been played
+            {
+                EndOfGame();
+            }
+        }
+
+        // when all cards had been played
+        public void EndOfGame()
+        {
+            // do we have to do anything now?
         }
 
         public void CardPlayed(string playingUser, Card c)
@@ -130,17 +152,21 @@ namespace BlazorChatSample.Shared
 
     public class PlayerGameState
     {
-        public List<Card> Hand { get; set; }    // probably, no set required
-        public int Points { get; set; }         // probably, no set required
+        public List<Card> Hand { get; set; } 
+        public int Points { get; set; } 
+        public int numTricks { get; set; }   
 
         public PlayerGameState()
         {
             Hand = new List<Card>();
+            Points = 0;
+            numTricks = 0;
         }
         public PlayerGameState(List<Card> hand)
         {
             Hand = hand;
             Points = 0;
+            numTricks = 0;
         }
     }
 }
