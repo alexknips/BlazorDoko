@@ -41,6 +41,8 @@
 
     @if (playing)
     {
+            
+        
         <div id="scrollbox">
 
             @for (var i = 0;i<cards.Count;i++)
@@ -118,9 +120,6 @@
             Console.WriteLine("Index: chart started?");
 
             playing = true;
-
-            cards.Add(new Card("AH"));
-            cards.Add(new Card("9S"));
         }
         catch (Exception e)
         {
@@ -172,6 +171,7 @@
 
     async Task ClickCard(int idx)
     {
+        Console.WriteLine("card clicked");
         await client.PlayCard(cards[idx]);
     }
 

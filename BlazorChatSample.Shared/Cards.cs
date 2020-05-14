@@ -18,8 +18,8 @@ namespace BlazorChatSample.Shared
 
     public class Card
     {
-        private CardColor cardColor;
-        private CardType cardType;
+        public CardColor cardColor { get; set; }  
+        public CardType cardType { get; set; }  
         // private static readonly Image backgroundImage = Cards.green_back;
         // private static readonly Image backgroundImage_rot = Cards.green_back_rot;
 
@@ -36,6 +36,12 @@ namespace BlazorChatSample.Shared
         public int points
         {
             get { return TypeToPoints(cardType); }
+        }
+
+        public Card()
+        {
+            cardColor = CardColor.Clovers;
+            cardType = CardType.Ace;
         }
 
         public Card(string name)

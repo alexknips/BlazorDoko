@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BlazorChatSample.Shared
 {
@@ -14,6 +15,10 @@ namespace BlazorChatSample.Shared
         public Dictionary<string, Card> LastTrick { get; set; }
         public string StartingPlayer { get; set; }
 
+        public GameState()
+        {
+            
+        }
         public GameState(string dealerUsername, List<string> allusers, bool bWithNines)
         {
             List<string> activePlayers = new List<string>();
@@ -93,7 +98,8 @@ namespace BlazorChatSample.Shared
 
             try
             {
-                PlayerStates[playingUser].Hand.Remove(c);
+                var cardToRemove = PlayerStates[playingUser].Hand.First(x=>x.cardColor==c.cardColor&&x.cardType==c.cardType);
+                PlayerStates[playingUser].Hand.Remove(cardToRemove);
             }
             catch
             {

@@ -72,8 +72,16 @@ namespace BlazorChatSample.Shared
                 // add handler for receiving messages
                 _hubConnection.On<GameState>(Messages.UPDATEGAMESTATE, (gamestate) =>
                  {
+                     Console.WriteLine(gamestate.ToString());
                      // TODO: sending a gamestate does not work. find fix
                      HandleGameUpdate(gamestate);
+                 });
+
+                // add handler for receiving messages
+                _hubConnection.On<int>("testmsg", (x) =>
+                 {
+                     // TODO: sending a gamestate does not work. find fix
+                     Console.WriteLine(x+10);
                  });
 
                 // start the connection
@@ -132,6 +140,8 @@ namespace BlazorChatSample.Shared
         }
 
         public async Task PlayCard(Card card){
+            Console.WriteLine(_username);
+            Console.WriteLine(card);
             await _hubConnection.SendAsync(Messages.PLAYCARD, _username, card);
         }
 
