@@ -15,9 +15,17 @@ namespace BlazorChatSample.Shared
         public Dictionary<string, Card> LastTrick { get; set; }
         public string StartingPlayer { get; set; }
 
+        public enum GamePhase{
+            waitingForStart, Playing, Done
+        }
+        public GamePhase gamePhase { get; set; }
+
         public GameState()
         {
-            
+            gamePhase = GamePhase.waitingForStart;
+            PlayerStates = new Dictionary<string, PlayerGameState>();
+            CurrentTrick = new Dictionary<string, Card?>();
+            LastTrick = new Dictionary<string, Card>();
         }
         public GameState(string dealerUsername, List<string> allusers, bool bWithNines)
         {
@@ -63,6 +71,7 @@ namespace BlazorChatSample.Shared
                 throw new System.NotImplementedException("might follow some day...");
             }
 
+            gamePhase = GamePhase.Playing;
             var deck = new Shared.Deck(bWithNines);
 
             CurrentTrick = new Dictionary<string, Card>();
@@ -108,7 +117,7 @@ namespace BlazorChatSample.Shared
         // when all cards had been played
         public void EndOfGame()
         {
-            // do we have to do anything now?
+            gamePhase = GamePhase.Done;
         }
 
         public void CardPlayed(string playingUser, Card c)
