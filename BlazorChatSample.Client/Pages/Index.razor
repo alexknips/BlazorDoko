@@ -149,6 +149,13 @@
                 <input type="image" src="cards/@(cards[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
             }
 
+            
+            @if(gameState != null) // list who is on the server
+                @foreach (var item in gameState.AllUsers)
+                {
+                    <div class="user">@item</div>
+                }
+
             @foreach (var item in messages)
             {
                 <div class="@item.CSS">

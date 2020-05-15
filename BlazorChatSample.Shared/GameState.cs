@@ -14,6 +14,7 @@ namespace BlazorChatSample.Shared
         public Dictionary<string, Card?> CurrentTrick { get; set; }
         public Dictionary<string, Card> LastTrick { get; set; }
         public string StartingPlayer { get; set; }
+        public List<string> AllUsers { get; set; }
 
         public enum GamePhase{
             waitingForStart, Playing, Done
@@ -29,6 +30,7 @@ namespace BlazorChatSample.Shared
         }
         public GameState(string dealerUsername, List<string> allusers, bool bWithNines)
         {
+            this.AllUsers = allusers;
             List<string> activePlayers = new List<string>();
             if (allusers.Count < 4)
             {
