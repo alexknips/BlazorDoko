@@ -12,7 +12,7 @@
 
 <div class="content px-4">
 
-    <h1>Doppelkopf</h1>
+    @* <h1>Doppelkopf</h1> *@
 
     @if (!playing)
     {
@@ -173,7 +173,7 @@
     // name of the user who will be playing
     string username = null;
 
-    ChatClient client = null;
+    GameClient client = null;
 
     // on-screen message
     string message = null;
@@ -207,7 +207,7 @@
 
             // Create the chat client
             string baseUrl = navigationManager.BaseUri;
-            client = new ChatClient(username, baseUrl);
+            client = new GameClient(username, baseUrl);
             // add an event handler for incoming messages
             client.MessageReceived += MessageReceived;
             client.GameUpdateReceived += UpdateGameState;
@@ -261,6 +261,8 @@
     void UpdateGameState(object sender, GameUpdateEventArgs e)
     {
         Console.WriteLine($"Blazor: receive update game state");
+        @* if(client!= null)
+            client.gameState = e.GameState; *@
         gameState = e.GameState;
         cards = gameState.PlayerStates[username].Hand;
         StateHasChanged();
@@ -269,7 +271,7 @@
     async Task ClickCard(int idx)
     {
         Console.WriteLine("card clicked");
-        await client.PlayCard(cards[idx]);
+        await client.PlayCard(idx);
     }
 
     async Task Dealing()

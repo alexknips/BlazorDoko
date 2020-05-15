@@ -11,7 +11,7 @@ namespace BlazorChatSample.Server.Hubs
     /// <summary>
     /// The SignalR hub 
     /// </summary>
-    public class ChatHub : Hub
+    public class GameHub : Hub
     {
         /// <summary>
         /// connectionId-to-username lookup

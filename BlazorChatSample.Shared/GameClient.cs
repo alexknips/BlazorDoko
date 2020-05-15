@@ -12,12 +12,15 @@ namespace BlazorChatSample.Shared
     /// <summary>
     /// Generic client class that interfaces .NET Standard/Blazor with SignalR Javascript client
     /// </summary>
-    public class ChatClient : IAsyncDisposable
+    public class GameClient : IAsyncDisposable
     {
-        public const string HUBURL = "/ChatHub";
+        public const string HUBURL = "/GameHub";
 
         private readonly string _hubUrl;
         private HubConnection _hubConnection;
+
+        public enum PlayerPhase{playing,waiting};
+        public PlayerPhase playerPhase {get;set;} = PlayerPhase.waiting;
 
         /// <summary>
         /// Ctor: create a new client for the given hub URL
@@ -26,7 +29,7 @@ namespace BlazorChatSample.Shared
         /// <remarks>
         /// Changed client to accept just the base server URL so any client can use it, including ConsoleApp!
         /// </remarks>
-        public ChatClient(string username, string siteUrl)
+        public GameClient(string username, string siteUrl)
         {
             // check inputs
             if (string.IsNullOrWhiteSpace(username))
@@ -49,6 +52,8 @@ namespace BlazorChatSample.Shared
         /// </summary>
         private bool _started = false;
 
+        public GameState gameState { get; set; }
+
         /// <summary>
         /// Start the SignalR client 
         /// </summary>
@@ -61,7 +66,7 @@ namespace BlazorChatSample.Shared
                     .WithUrl(_hubUrl)
                     // .WithAutomaticReconnect()
                     .Build();
-                Console.WriteLine("ChatClient: calling Start()");
+                Console.WriteLine("GameClient: calling Start()");
 
                 // add handler for receiving messages
                 _hubConnection.On<string, string>(Messages.RECEIVE, (user, message) =>
@@ -77,17 +82,10 @@ namespace BlazorChatSample.Shared
                      HandleGameUpdate(gamestate);
                  });
 
-                // add handler for receiving messages
-                _hubConnection.On<int>("testmsg", (x) =>
-                 {
-                     // TODO: sending a gamestate does not work. find fix
-                     Console.WriteLine(x+10);
-                 });
-
                 // start the connection
                 await _hubConnection.StartAsync();
 
-                Console.WriteLine("ChatClient: Start returned");
+                Console.WriteLine("GameClient: Start returned");
                 _started = true;
 
                 // register user on hub to let other clients know they've joined
@@ -139,7 +137,8 @@ namespace BlazorChatSample.Shared
             await _hubConnection.SendAsync(Messages.SEND, _username, message);
         }
 
-        public async Task PlayCard(Card card){
+        public async Task PlayCard(int idx){
+            Card card = gameState.PlayerStates[_username].Hand[idx];
             Console.WriteLine(_username);
             Console.WriteLine(card);
             await _hubConnection.SendAsync(Messages.PLAYCARD, _username, card);
@@ -172,8 +171,16 @@ namespace BlazorChatSample.Shared
 
         public async ValueTask DisposeAsync()
         {
-            Console.WriteLine("ChatClient: Disposing");
+            Console.WriteLine("GameClient: Disposing");
             await StopAsync();
+        }
+
+        public List<Card> GetOwnCards()
+        {
+            Console.WriteLine("getowncards");
+            if(gameState!= null && gameState.PlayerStates!= null && gameState.PlayerStates.Keys.Contains(_username))
+                return gameState.PlayerStates[_username].Hand;
+            return null;
         }
     }
 
