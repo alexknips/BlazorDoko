@@ -137,17 +137,31 @@ namespace BlazorChatSample.Shared
             await _hubConnection.SendAsync(Messages.SEND, _username, message);
         }
 
-        public async Task PlayCard(int idx){
-            Card card = gameState.PlayerStates[_username].Hand[idx];
+        public async Task PlayCard(Card c){
+            // Card card = gameState.PlayerStates[_username].Hand[idx];
             Console.WriteLine(_username);
-            Console.WriteLine(card);
-            await _hubConnection.SendAsync(Messages.PLAYCARD, _username, card);
+            Console.WriteLine(c);
+            await _hubConnection.SendAsync(Messages.PLAYCARD, _username, c);
         }
+
+        public async Task WithdrawCard(){
+            // Card card = gameState.PlayerStates[_username].Hand[idx];
+            Console.WriteLine(_username);
+            await _hubConnection.SendAsync(Messages.WITHDRAWCARD, _username);
+        }
+
 
         public async Task ReqDealing(bool withNines = true){
             await _hubConnection.SendAsync(Messages.REQDEALING, _username, withNines);
         }
         
+        public async Task Claiming(){
+            await _hubConnection.SendAsync(Messages.CLAIMING , _username);
+        }
+
+        public async Task OfferCard(string cardReceiver, Card c){
+            await _hubConnection.SendAsync(Messages.TRADING , _username, cardReceiver, c);
+        }
 
         /// <summary>
         /// Stop the client (if started)
@@ -175,13 +189,6 @@ namespace BlazorChatSample.Shared
             await StopAsync();
         }
 
-        public List<Card> GetOwnCards()
-        {
-            Console.WriteLine("getowncards");
-            if(gameState!= null && gameState.PlayerStates!= null && gameState.PlayerStates.Keys.Contains(_username))
-                return gameState.PlayerStates[_username].Hand;
-            return null;
-        }
     }
 
     /// <summary>

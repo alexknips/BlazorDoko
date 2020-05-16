@@ -6,6 +6,7 @@
     @if (playing)
     {
         <p>You are connected as <b>@username</b></p>
+        <p>On the server: @playerlist</p>
         <button class="btn btn-sm btn-warning ml-md-auto" @onclick="@DisconnectAsync">Disconnect</button>
     }
 </div>
@@ -16,21 +17,16 @@
 
     @if (!playing)
     {
-        @* Moved instructions to shared component *@
-        @* <Instructions /> *@
-
-        @* <h2>DoKo</h2> *@
-
         <p>
             Enter your name to start playing:
         </p>
 
         <input type="text" maxlength="32" @bind="@username" />
         <button type="button" @onclick="@Chat"><span class="oi oi-chat" aria-hidden="true"></span> Join!</button>
-        <div>
+        @* <div>
             <input type="checkbox" id="hosting" name="hosting" Checked="@hosting">
             <label for="hosting">host</label>
-        </div>
+        </div> *@
 
         @if (message != null)
         {
@@ -47,57 +43,92 @@
                 <div class="col">
                 </div>
                 <div class="col-sm">
-                   <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
+                    @GetPlayerTop()
+                    @GetStarting()[2]
+                    @GetPlayerTricks(GetPlayerTop())
+                    @GetPlayerPoints(GetPlayerTop())
+                    @for (var i = 0;i<GetPlayerCards(GetPlayerTop()).Count;i++)
+                    { 
+                        var cardIdx = i;
+                        <input type="image" src="cards/@(GetPlayerCards(GetPlayerTop())[i].ToString()).jpg" width=20% />
+                    } 
                 </div>
                 <div class="col">
                 </div>
             </div>
             <div class="row">
                 <div class="col">
+                    @GetPlayerLeft()
+                    @GetStarting()[1]
+                    @GetPlayerTricks(GetPlayerLeft())
+                    @GetPlayerPoints(GetPlayerLeft())
                     <div class="rotate">
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
+                        @for (var i = 0;i<GetPlayerCards(GetPlayerLeft()).Count;i++)
+                        { 
+                            var cardIdx = i;
+                            <input type="image" src="cards/@(GetPlayerCards(GetPlayerLeft())[i].ToString()).jpg" width=20% />
+                        } 
                     </div>
                 </div>
                 <div class="col-sm">
-                Tisch mitte
+                Tischmitte
+                    @* @for (var i = 0;i<GetCardsTable().Count;i++)
+                    { 
+                        var cardIdx = i;
+                        <input type="image" src="cards/@(GetCardsTable()[i].ToString()).jpg" width=20%  />
+                    }  *@
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                            </div>
+                            <div class="col-sm">
+                                @if(GetCardsTable().Keys.Contains(GetPlayerTop())){
+                                    <input type="image" src="cards/@(GetCardsTable()[GetPlayerTop()].ToString()).jpg" width=50%  />
+                                }
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                @if(GetCardsTable().Keys.Contains(GetPlayerLeft())){
+                                    <input type="image" src="cards/@(GetCardsTable()[GetPlayerLeft()].ToString()).jpg" width=50%  />
+                                }
+                            </div>
+                            <div class="col-sm">
+                            </div>
+                            <div class="col">
+                                @if(GetCardsTable().Keys.Contains(GetPlayerRight())){
+                                    <input type="image" src="cards/@(GetCardsTable()[GetPlayerRight()].ToString()).jpg" width=50%  />
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                            </div>
+                            <div class="col-sm">
+                                @if(GetCardsTable().Keys.Contains(GetPlayerBottom())){
+                                    <input type="image" src="cards/@(GetCardsTable()[GetPlayerBottom()].ToString()).jpg" width=20%  @onclick="@ClickCardTable"/>
+                                }
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="col">
+                    @GetPlayerRight()
+                    @GetStarting()[3]
+                    @GetPlayerTricks(GetPlayerRight())
+                    @GetPlayerPoints(GetPlayerRight())
                     <div class="rotate">
-                        @* <img src="..." class="img-fluid" alt=""> *@
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
-                        <input type="image" src="cards/9C.jpg" />
+                        @for (var i = 0;i<GetPlayerCards(GetPlayerRight()).Count;i++)
+                        { 
+                            var cardIdx = i;
+                            <input type="image" src="cards/@(GetPlayerCards(GetPlayerRight())[i].ToString()).jpg" width=20% @onclick="@(e => ClickCard(cardIdx))" />
+                        } 
                     </div>
                 </div>
             </div>
@@ -105,69 +136,53 @@
                 <div class="col">
                 </div>
                 <div class="col-sm">
-                   <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
-                    <input type="image" src="cards/9C.jpg" />
+                    @GetStarting()[0]
+                    @GetPlayerTricks(GetPlayerBottom())
+                    @GetPlayerPoints(GetPlayerBottom())
+                    @for (var i = 0;i<GetPlayerCards(GetPlayerBottom()).Count;i++)
+                    { 
+                        var cardIdx = i;
+                        <input type="image" src="cards/@(GetPlayerCards(GetPlayerBottom())[i].ToString()).jpg" width=20% @onclick="@(e => ClickCard(cardIdx))" />
+                    } 
                 </div>
                 <div class="col">
                 </div>
             </div>
         </div>
 
-
-        @* <div>
-            <input type="image" src="cards/9C.jpg" />
-            <input type="image" src="cards/9C.jpg" />
-            <input type="image" src="cards/9C.jpg" />
-            <input type="image" src="cards/9C.jpg" />
-            <input type="image" src="cards/9C.jpg" />
-            <input type="image" src="cards/9C.jpg" />
-            <input type="image" src="cards/9C.jpg" />
-            <input type="image" src="cards/9C.jpg" />
-            <input type="image" src="cards/9C.jpg" />
-            <input type="image" src="cards/9C.jpg" />
-            <input type="image" src="cards/9C.jpg" />
-            <input type="image" src="cards/9C.jpg />
-        </div> *@
-
         
         <div id="scrollbox">
 
-            @for (var i = 0;i<cards.Count;i++)
-            { // just make the cards as a like of buttons
-                @* <button class="btn btn-default" @onclick="@ClickCard">@cards[i].ToString()</button> *@
+            @* @for (var i = 0;i<GetOwnCards().Count;i++)
+            { 
                 var cardIdx = i;
-                <input type="image" src="cards/@(cards[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
-            }
+                <input type="image" src="cards/@(GetOwnCards()[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
+            }  *@
 
-            
-            @if(gameState != null) // list who is on the server
-                @foreach (var item in gameState.AllUsers)
-                {
-                    <div class="user">@item</div>
-                }
-
-            @foreach (var item in messages)
+            @* @foreach (var item in messages)
             {
                 <div class="@item.CSS">
                     <div class="user">@item.Username</div>
                     <div class="msg">@item.Body</div>
                 </div>
-            }
+            } *@
             <hr />
-            <textarea class="input-lg" placeholder="enter your comment" @bind="@newMessage"></textarea>
-            <button class="btn btn-default" @onclick="@SendAsync">Send</button>
-            <button class="btn btn-default" @onclick="@Dealing">Deal</button>
-            
+            @* <textarea class="input-lg" placeholder="enter your comment" @bind="@newMessage"></textarea> *@
+            @* <button class="btn btn-default" @onclick="@SendAsync">Send</button> *@
+            <button class="btn btn-default" @onclick="@(e => Dealing(true))">Deal with Nines</button>
+            <button class="btn btn-default" @onclick="@(e => Dealing(false))">Deal without Nines</button>
+            @if(!roundStarted) {
+                @if(tradingPartner == null) {
+                    <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerLeft()))">Trade Cards with @GetPlayerLeft()</button>
+                    <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerTop()))">Trade Cards with @GetPlayerTop()</button>
+                    <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerRight()))">Trade Cards with @GetPlayerRight()</button>
+                }
+                else
+                {
+                    <button class="btn btn-default" @onclick="@(e => Trading(""))">Stop trading</button>
+                }
+            }
+            <button class="btn btn-default" @onclick="@Claiming">Claim</button>
         </div>
     }
 </div>
@@ -175,7 +190,10 @@
 @code  {
     // flag to indicate chat status
     bool playing = false;
-    bool hosting = false;
+
+    bool roundStarted = false;  // true between first and last played card
+    //bool hosting = false;
+    string playerlist = "";
 
     // name of the user who will be playing
     string username = null;
@@ -188,9 +206,10 @@
     // new message input
     string newMessage = null;
 
+    string tradingPartner = null;
+
     // list of messages in chat
     List<Message> messages = new List<Message>();
-    List<Card> cards = new List<Card>();
 
     // current gameState of the client
     GameState gameState = null;
@@ -271,19 +290,57 @@
         @* if(client!= null)
             client.gameState = e.GameState; *@
         gameState = e.GameState;
-        cards = gameState.PlayerStates[username].Hand;
+        roundStarted = (gameState.gamePhase == GameState.GamePhase.Playing);
+        Console.WriteLine("round started: ");
+        Console.WriteLine(roundStarted);
+        playerlist = GetPlayerList();
+        
         StateHasChanged();
     }
 
     async Task ClickCard(int idx)
     {
-        Console.WriteLine("card clicked");
-        await client.PlayCard(idx);
+        if(gameState.ActivePlayers.Contains(username)) {
+            if(tradingPartner == null) {
+                Console.WriteLine("card clicked for playing");
+                await client.PlayCard(GetOwnCards()[idx]);
+            }
+            else {
+
+                Console.WriteLine("card clicked for trading");
+                await client.OfferCard(tradingPartner, GetOwnCards()[idx]);
+            }
+        }
     }
 
-    async Task Dealing()
+    async Task ClickCardTable()
     {
-        await client.ReqDealing(true);
+        if(gameState.ActivePlayers.Contains(username)) {
+            Console.WriteLine("card clicked");
+            await client.WithdrawCard();
+        }
+    }
+    async Task Dealing(bool bWithNines)
+    {
+        await client.ReqDealing(bWithNines);
+    }
+    async Task Claiming()
+    {
+        Console.WriteLine("Claiming");
+        await client.Claiming();
+    }
+
+    void Trading(string receiver)
+    {
+        if(receiver.Length > 0) {
+            Console.WriteLine(username + " wants to trade with " + receiver);
+            tradingPartner = receiver;
+        }
+        else{
+            Console.WriteLine(username + " stops trading with " + receiver);
+            tradingPartner = null;
+        }
+        StateHasChanged();
     }
 
     async Task SendAsync()
@@ -295,6 +352,115 @@
             // clear input box
             newMessage = "";
         }
+        
+    }
+
+    public Dictionary<string,Card> GetCardsTable()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return new Dictionary<string,Card>();
+        //Dictionary<string,Card> currentTrick = new Dictionary<string,Card>();
+        //foreach(string player in gameState.CurrentTrick.Keys)
+        //{
+        //    if(gameState.CurrentTrick[player]!= null)
+        //        currentTrick.Add(player,gameState.CurrentTrick[player]);
+        //}
+        return gameState.CurrentTrick;
+    }
+
+    public List<Card> GetOwnCards()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return new List<Card>();
+        if(gameState.PlayerStates.Keys.Contains(username))
+            return gameState.PlayerStates[username].Hand;
+        return new List<Card>();
+    }
+    public List<Card> GetPlayerCards(string playerName)
+    {
+        if(gameState == null || gameState.PlayerStates == null || playerName == "")
+            return new List<Card>();
+        if(gameState.PlayerStates.Keys.Contains(playerName))
+            return gameState.PlayerStates[playerName].Hand;
+        return new List<Card>();
+    }
+
+    public int GetPlayerTricks(string playerName)
+    {
+        if(gameState == null || gameState.PlayerStates == null || playerName == "")
+            return 0;
+        return gameState.PlayerStates[playerName].numTricks;
+    }
+    public int GetPlayerPoints(string playerName)
+    {
+        if(gameState == null || gameState.PlayerStates == null || playerName == "")
+            return 0;
+        return gameState.PlayerStates[playerName].Points;
+    }
+
+    public int GetBottomPlayerIdx()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return -1;
+        if(gameState.ActivePlayers.Contains(username)) // player participates
+        {
+            return gameState.ActivePlayers.IndexOf(username);
+        }
+        return 0;
+    }
+    public string GetPlayerBottom()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return "";
+        
+        return gameState.ActivePlayers[(GetBottomPlayerIdx())%4];   // own player - or who is sitting there instead
+    }
+    public string GetPlayerLeft()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return "";
+        return gameState.ActivePlayers[(GetBottomPlayerIdx() + 1)%4];   // left of own player
+    }
+    public string GetPlayerTop()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return "";
+        return gameState.ActivePlayers[(GetBottomPlayerIdx() + 2)%4];   // top of own player
+    }
+    public string GetPlayerRight()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return "";
+        return gameState.ActivePlayers[(GetBottomPlayerIdx() + 3)%4];   // right of own player
+    }
+
+    public List<string> GetStarting()
+    {
+        List<string> startingString = new List<string>() {"","","",""};
+        if(gameState == null || gameState.PlayerStates == null)
+            return startingString;
+        if(gameState.StartingPlayer == username)
+            startingString[0] = "*";
+        if(gameState.StartingPlayer == GetPlayerLeft())
+            startingString[1] = "*";
+        if(gameState.StartingPlayer == GetPlayerTop())
+            startingString[2] = "*";
+        if(gameState.StartingPlayer == GetPlayerRight())
+            startingString[3] = "*";
+        return startingString;
+    }
+
+    public string GetPlayerList()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return "";
+        string playerList = "";
+        foreach(string player in gameState.AllUsers)
+        {
+            playerList += player + ", ";
+        }
+        Console.WriteLine(playerList);
+        return playerList.Substring(0, Math.Min(0, playerList.Length-2)); // cut away last 2 chars (", ")
     }
 
     class Message

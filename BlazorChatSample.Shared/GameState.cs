@@ -11,21 +11,28 @@ namespace BlazorChatSample.Shared
         // Hands
         public Dictionary<string, PlayerGameState> PlayerStates { get; set; }
 
-        public Dictionary<string, Card?> CurrentTrick { get; set; }
+        public Dictionary<string, Card> CurrentTrick { get; set; }
         public Dictionary<string, Card> LastTrick { get; set; }
         public string StartingPlayer { get; set; }
         public List<string> AllUsers { get; set; }
+        public List<string> ActivePlayers { 
+            get{ 
+                if(PlayerStates!=null) 
+                    return PlayerStates.Keys.ToList();
+                return new List<string>();
+            }
+        }
 
         public enum GamePhase{
             waitingForStart, Playing, Done
         }
-        public GamePhase gamePhase { get; set; }
+        public GamePhase gamePhase { get; set; } = GamePhase.waitingForStart;
 
         public GameState()
         {
             gamePhase = GamePhase.waitingForStart;
             PlayerStates = new Dictionary<string, PlayerGameState>();
-            CurrentTrick = new Dictionary<string, Card?>();
+            CurrentTrick = new Dictionary<string, Card>();
             LastTrick = new Dictionary<string, Card>();
         }
         public GameState(string dealerUsername, List<string> allusers, bool bWithNines)
@@ -73,7 +80,6 @@ namespace BlazorChatSample.Shared
                 throw new System.NotImplementedException("might follow some day...");
             }
 
-            gamePhase = GamePhase.Playing;
             var deck = new Shared.Deck(bWithNines);
 
             CurrentTrick = new Dictionary<string, Card>();
@@ -83,8 +89,6 @@ namespace BlazorChatSample.Shared
             {
                 var gameStatePlayer = new PlayerGameState(deck.GetCardsForPlayer(i));
                 PlayerStates.Add(activePlayers[i], gameStatePlayer);
-                CurrentTrick.Add(activePlayers[i], null);
-                LastTrick.Add(activePlayers[i], null);
             }
         }
 
@@ -93,41 +97,40 @@ namespace BlazorChatSample.Shared
         // The CurrentTrick is set to be empty for each player
         public void TrickClaimed(string claimingPlayer)
         {
-            LastTrick = CurrentTrick;
+            LastTrick = new Dictionary<string, Card>(CurrentTrick);
 
             int valueOfTrick = 0;
-            foreach (string players in CurrentTrick.Keys)
+            List<string> activePlayers = PlayerStates.Keys.ToList();
+            foreach (string players in activePlayers)
             {
                 valueOfTrick += CurrentTrick[players].points;
-                CurrentTrick[players] = null;
             }
             PlayerStates[claimingPlayer].Points += valueOfTrick;
+            PlayerStates[claimingPlayer].numTricks++;
+
+            CurrentTrick = new Dictionary<string, Card>();
 
             int? numCards = null;
             foreach(string player in PlayerStates.Keys)
-                if(numCards == 0)
+                if(numCards == null)
                     numCards = PlayerStates[player].Hand.Count;
                 else if(PlayerStates[player].Hand.Count != numCards)
                     throw new System.Exception("number of cards of players differ");
 
-            if(numCards == 0) // all cards had been played
-            {
-                EndOfGame();
-            }
-        }
-
-        // when all cards had been played
-        public void EndOfGame()
-        {
-            gamePhase = GamePhase.Done;
+            // set to phase "playing" after first complete trick. 
+            // maybe people want to withdraw and go back to initial phase for trading cards
+            if(numCards > 0)
+                gamePhase = GamePhase.Playing;  
+            else
+                gamePhase = GamePhase.Done;
         }
 
         public void CardPlayed(string playingUser, Card c)
         {
-            if (CurrentTrick[playingUser] != null)
+            if (CurrentTrick.ContainsKey(playingUser))
                 throw new System.InvalidOperationException("another card had already been played");
 
-            CurrentTrick[playingUser] = c;
+            CurrentTrick.Add(playingUser,new Card(c));
 
             try
             {
@@ -138,17 +141,18 @@ namespace BlazorChatSample.Shared
             {
                 throw new System.Exception("could not remove card although it was played");
             }
+
         }
 
         public void CardWithdrawn(string withdrawingUser)
         {
-            if (CurrentTrick[withdrawingUser] == null)
+            if (!CurrentTrick.ContainsKey(withdrawingUser))
             {
                 throw new System.InvalidOperationException("there is no card to withdraw");
             }
             var card = CurrentTrick[withdrawingUser];
-            PlayerStates[withdrawingUser].Hand.Add(card);
-            CurrentTrick[withdrawingUser] = null;
+            PlayerStates[withdrawingUser].Hand.Add(new Card(card));
+            CurrentTrick.Remove(withdrawingUser);
         }
 
         public void CardOffered(string fromUser, string toUser, Card card)
@@ -156,8 +160,9 @@ namespace BlazorChatSample.Shared
             if (fromUser == toUser)
                 throw new System.InvalidOperationException("From and To user cannot be equal");
 
-            PlayerStates[fromUser].Hand.Remove(card);
-            PlayerStates[toUser].Hand.Add(card);
+            var cardToRemove = PlayerStates[fromUser].Hand.First(x=>x.cardColor==card.cardColor&&x.cardType==card.cardType);
+            PlayerStates[fromUser].Hand.Remove(cardToRemove);
+            PlayerStates[toUser].Hand.Add(new Card(card));
         }
     }
 

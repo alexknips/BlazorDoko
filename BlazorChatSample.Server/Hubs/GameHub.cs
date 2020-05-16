@@ -70,10 +70,10 @@ namespace BlazorChatSample.Server.Hubs
         }
 
         // Offer card to another player
-        public async Task OfferCard(string username, string receivingUser, string card)
+        public async Task OfferCard(string username, string receivingUser, Card card)
         {
             // 1. calculate GameState
-            gameState.CardOffered(username, receivingUser, new Card(card));
+            gameState.CardOffered(username, receivingUser, card);
             // 2. return new GameState
             await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
         }

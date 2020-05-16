@@ -30,6 +30,8 @@ namespace BlazorChatSample.Shared
         public const string PLAYCARD = "PlayCard";
         public const string WITHDRAWCARD = "WithdrawCard";
         public const string REQDEALING = "RequestDealing";
+        public const string CLAIMING = "ClaimTrick";
+        public const string TRADING = "OfferCard";
 
     }
 }
