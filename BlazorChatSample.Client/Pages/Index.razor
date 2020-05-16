@@ -6,7 +6,9 @@
     @if (playing)
     {
         <p>You are connected as <b>@username</b></p>
-        <p>On the server: @playerlist</p>
+        @if(playerlist != null){
+            <br/><p>On the server: @playerlist</p>
+        }
         <button class="btn btn-sm btn-warning ml-md-auto" @onclick="@DisconnectAsync">Disconnect</button>
     }
 </div>
@@ -22,7 +24,7 @@
         </p>
 
         <input type="text" maxlength="32" @bind="@username" />
-        <button type="button" @onclick="@Chat"><span class="oi oi-chat" aria-hidden="true"></span> Join!</button>
+        <button type="button" @onclick="@Join"><span class="oi oi-chat" aria-hidden="true"></span> Join!</button>
         @* <div>
             <input type="checkbox" id="hosting" name="hosting" Checked="@hosting">
             <label for="hosting">host</label>
@@ -136,6 +138,7 @@
                 <div class="col">
                 </div>
                 <div class="col-sm">
+                    @GetPlayerBottom()
                     @GetStarting()[0]
                     @GetPlayerTricks(GetPlayerBottom())
                     @GetPlayerPoints(GetPlayerBottom())
@@ -172,14 +175,16 @@
             <button class="btn btn-default" @onclick="@(e => Dealing(true))">Deal with Nines</button>
             <button class="btn btn-default" @onclick="@(e => Dealing(false))">Deal without Nines</button>
             @if(!roundStarted) {
-                @if(tradingPartner == null) {
-                    <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerLeft()))">Trade Cards with @GetPlayerLeft()</button>
-                    <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerTop()))">Trade Cards with @GetPlayerTop()</button>
-                    <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerRight()))">Trade Cards with @GetPlayerRight()</button>
-                }
-                else
-                {
-                    <button class="btn btn-default" @onclick="@(e => Trading(""))">Stop trading</button>
+                @if(gameState != null) {
+                    @if(tradingPartner == null) {
+                        <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerLeft()))">Trade Cards with @GetPlayerLeft()</button>
+                        <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerTop()))">Trade Cards with @GetPlayerTop()</button>
+                        <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerRight()))">Trade Cards with @GetPlayerRight()</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-default" @onclick="@(e => Trading(""))">Stop trading</button>
+                    }
                 }
             }
             <button class="btn btn-default" @onclick="@Claiming">Claim</button>
@@ -193,7 +198,7 @@
 
     bool roundStarted = false;  // true between first and last played card
     //bool hosting = false;
-    string playerlist = "";
+    string playerlist = null;
 
     // name of the user who will be playing
     string username = null;
@@ -217,7 +222,7 @@
     /// <summary>
     /// Start chat client
     /// </summary>
-    async Task Chat()
+    async Task Join()
     {
         // check username is valid
         if (string.IsNullOrWhiteSpace(username))
@@ -238,9 +243,7 @@
             client.MessageReceived += MessageReceived;
             client.GameUpdateReceived += UpdateGameState;
             // start the client
-            Console.WriteLine("Index: chart starting...");
             await client.StartAsync();
-            Console.WriteLine("Index: chart started?");
 
             playing = true;
         }
@@ -291,9 +294,8 @@
             client.gameState = e.GameState; *@
         gameState = e.GameState;
         roundStarted = (gameState.gamePhase == GameState.GamePhase.Playing);
-        Console.WriteLine("round started: ");
-        Console.WriteLine(roundStarted);
         playerlist = GetPlayerList();
+        Console.WriteLine(playerlist);
         
         StateHasChanged();
     }
@@ -302,12 +304,9 @@
     {
         if(gameState.ActivePlayers.Contains(username)) {
             if(tradingPartner == null) {
-                Console.WriteLine("card clicked for playing");
                 await client.PlayCard(GetOwnCards()[idx]);
             }
             else {
-
-                Console.WriteLine("card clicked for trading");
                 await client.OfferCard(tradingPartner, GetOwnCards()[idx]);
             }
         }
@@ -347,9 +346,7 @@
     {
         if (playing && !string.IsNullOrWhiteSpace(newMessage))
         {
-            // send message to hub
             await client.SendAsync(newMessage);
-            // clear input box
             newMessage = "";
         }
         
@@ -460,7 +457,12 @@
             playerList += player + ", ";
         }
         Console.WriteLine(playerList);
-        return playerList.Substring(0, Math.Min(0, playerList.Length-2)); // cut away last 2 chars (", ")
+        try{
+            return playerList.Substring(0, Math.Max(0, playerList.Length-2)); // cut away last 2 chars (", ")
+        }
+        catch{
+            return playerList;
+        }
     }
 
     class Message
