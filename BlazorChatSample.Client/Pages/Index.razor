@@ -2,12 +2,13 @@
 @page "/"
 @inject NavigationManager navigationManager
 
+
 <div class="top-row px-4">
     @if (playing)
     {
         <p>You are connected as <b>@username</b></p>
         @if(playerlist != null){
-            <br/><p>On the server: @playerlist</p>
+            <br /><p>On the server: @playerlist</p>
         }
         <button class="btn btn-sm btn-warning ml-md-auto" @onclick="@DisconnectAsync">Disconnect</button>
     }
@@ -40,6 +41,9 @@
     @if (playing)
     {
 
+        
+        <div id="scrollbox">
+            
       <div class="container">
             <div class="row">
                 <div class="col">
@@ -49,11 +53,13 @@
                     @GetStarting()[2]
                     @GetPlayerTricks(GetPlayerTop())
                     @GetPlayerPoints(GetPlayerTop())
+                    
                     @for (var i = 0;i<GetPlayerCards(GetPlayerTop()).Count;i++)
                     { 
                         var cardIdx = i;
-                        <input type="image" src="cards/@(GetPlayerCards(GetPlayerTop())[i].ToString()).jpg" width=20% />
-                    } 
+                        @* <img src="cards/@(GetPlayerCards(GetPlayerTop())[i].ToString()).jpg" width=10% />         *@
+                        <img src="cards/green_back.jpg" width=10%  />
+                    }
                 </div>
                 <div class="col">
                 </div>
@@ -68,17 +74,13 @@
                         @for (var i = 0;i<GetPlayerCards(GetPlayerLeft()).Count;i++)
                         { 
                             var cardIdx = i;
-                            <input type="image" src="cards/@(GetPlayerCards(GetPlayerLeft())[i].ToString()).jpg" width=20% />
+                            @* <img src="cards/@(GetPlayerCards(GetPlayerLeft())[i].ToString()).jpg" width=10% /> *@
+                            <img src="cards/green_back.jpg" width=10%  />
                         } 
                     </div>
                 </div>
                 <div class="col-sm">
                 Tischmitte
-                    @* @for (var i = 0;i<GetCardsTable().Count;i++)
-                    { 
-                        var cardIdx = i;
-                        <input type="image" src="cards/@(GetCardsTable()[i].ToString()).jpg" width=20%  />
-                    }  *@
 
                     <div class="container">
                         <div class="row">
@@ -86,7 +88,7 @@
                             </div>
                             <div class="col-sm">
                                 @if(GetCardsTable().Keys.Contains(GetPlayerTop())){
-                                    <input type="image" src="cards/@(GetCardsTable()[GetPlayerTop()].ToString()).jpg" width=50%  />
+                                    <img src="cards/@(GetCardsTable()[GetPlayerTop()].ToString()).jpg" width=20%  />
                                 }
                             </div>
                             <div class="col">
@@ -95,14 +97,14 @@
                         <div class="row">
                             <div class="col">
                                 @if(GetCardsTable().Keys.Contains(GetPlayerLeft())){
-                                    <input type="image" src="cards/@(GetCardsTable()[GetPlayerLeft()].ToString()).jpg" width=50%  />
+                                    <img src="cards/@(GetCardsTable()[GetPlayerLeft()].ToString()).jpg" width=20%   />
                                 }
                             </div>
                             <div class="col-sm">
                             </div>
                             <div class="col">
                                 @if(GetCardsTable().Keys.Contains(GetPlayerRight())){
-                                    <input type="image" src="cards/@(GetCardsTable()[GetPlayerRight()].ToString()).jpg" width=50%  />
+                                    <img src="cards/@(GetCardsTable()[GetPlayerRight()].ToString()).jpg" width=20%  />
                                 }
                             </div>
                         </div>
@@ -111,7 +113,7 @@
                             </div>
                             <div class="col-sm">
                                 @if(GetCardsTable().Keys.Contains(GetPlayerBottom())){
-                                    <input type="image" src="cards/@(GetCardsTable()[GetPlayerBottom()].ToString()).jpg" width=20%  @onclick="@ClickCardTable"/>
+                                    <input type="image" src="cards/@(GetCardsTable()[GetPlayerBottom()].ToString()).jpg"  width=20% @onclick="@ClickCardTable"/>
                                 }
                             </div>
                             <div class="col">
@@ -129,7 +131,8 @@
                         @for (var i = 0;i<GetPlayerCards(GetPlayerRight()).Count;i++)
                         { 
                             var cardIdx = i;
-                            <input type="image" src="cards/@(GetPlayerCards(GetPlayerRight())[i].ToString()).jpg" width=20% @onclick="@(e => ClickCard(cardIdx))" />
+                            @* <input type="image" src="cards/@(GetPlayerCards(GetPlayerRight())[i].ToString()).jpg" width=10%  /> *@
+                            <img src="cards/green_back.jpg" width=10%  />
                         } 
                     </div>
                 </div>
@@ -145,7 +148,13 @@
                     @for (var i = 0;i<GetPlayerCards(GetPlayerBottom()).Count;i++)
                     { 
                         var cardIdx = i;
-                        <input type="image" src="cards/@(GetPlayerCards(GetPlayerBottom())[i].ToString()).jpg" width=20% @onclick="@(e => ClickCard(cardIdx))" />
+                        @if(GetPlayerBottom() == username){
+                            <input type="image" src="cards/@(GetPlayerCards(GetPlayerBottom())[i].ToString()).jpg" width=20% @onclick="@(e => ClickCard(cardIdx))" />
+                        }
+                        else
+                        {
+                            <img src="cards/green_back.jpg" width=20%  />
+                        }
                     } 
                 </div>
                 <div class="col">
@@ -153,8 +162,6 @@
             </div>
         </div>
 
-        
-        <div id="scrollbox">
 
             @* @for (var i = 0;i<GetOwnCards().Count;i++)
             { 
@@ -174,20 +181,22 @@
             @* <button class="btn btn-default" @onclick="@SendAsync">Send</button> *@
             <button class="btn btn-default" @onclick="@(e => Dealing(true))">Deal with Nines</button>
             <button class="btn btn-default" @onclick="@(e => Dealing(false))">Deal without Nines</button>
-            @if(!roundStarted) {
-                @if(gameState != null) {
-                    @if(tradingPartner == null) {
-                        <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerLeft()))">Trade Cards with @GetPlayerLeft()</button>
-                        <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerTop()))">Trade Cards with @GetPlayerTop()</button>
-                        <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerRight()))">Trade Cards with @GetPlayerRight()</button>
-                    }
-                    else
-                    {
-                        <button class="btn btn-default" @onclick="@(e => Trading(""))">Stop trading</button>
+            @if(GetPlayerBottom() == username){ // this player participates
+                @if(!roundStarted) {
+                    @if(gameState != null) {
+                        @if(tradingPartner == null) {
+                            <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerLeft()))">Trade Cards with @GetPlayerLeft()</button>
+                            <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerTop()))">Trade Cards with @GetPlayerTop()</button>
+                            <button class="btn btn-default" @onclick="@(e => Trading(GetPlayerRight()))">Trade Cards with @GetPlayerRight()</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-default" @onclick="@(e => Trading(""))">Stop trading</button>
+                        }
                     }
                 }
+                <button class="btn btn-default" @onclick="@Claiming">Claim</button>
             }
-            <button class="btn btn-default" @onclick="@Claiming">Claim</button>
         </div>
     }
 </div>

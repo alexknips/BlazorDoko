@@ -81,6 +81,7 @@ namespace BlazorChatSample.Shared
             }
 
             var deck = new Shared.Deck(bWithNines);
+            deck.Shuffle();
 
             CurrentTrick = new Dictionary<string, Card>();
             LastTrick  = new Dictionary<string, Card>();
@@ -181,6 +182,7 @@ namespace BlazorChatSample.Shared
         public PlayerGameState(List<Card> hand)
         {
             Hand = hand;
+            Hand.Sort(Card.Compare);
             Points = 0;
             numTricks = 0;
         }
