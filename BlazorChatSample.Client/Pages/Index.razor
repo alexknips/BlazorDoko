@@ -162,7 +162,13 @@
             </div>
         </div>
 
-
+            <div>
+                        @for (var i = 0;i<GetLastTrick().Count;i++)
+                        { 
+                            var cardIdx = i;
+                            <input type="image" src="cards/@(GetLastTrick()[i].ToString()).jpg" width=10%  /> 
+                        } 
+            </div>
             @* @for (var i = 0;i<GetOwnCards().Count;i++)
             { 
                 var cardIdx = i;
@@ -196,6 +202,7 @@
                     }
                 }
                 <button class="btn btn-default" @onclick="@Claiming">Claim</button>
+                <button class="btn btn-default" @onclick="@LastTrick">Show last trick</button>
             }
         </div>
     }
@@ -227,6 +234,8 @@
 
     // current gameState of the client
     GameState gameState = null;
+
+    bool showLastTrick = false;
 
     /// <summary>
     /// Start chat client
@@ -338,6 +347,11 @@
         await client.Claiming();
     }
 
+    public void LastTrick()
+    {
+        showLastTrick = !showLastTrick;
+    }
+
     void Trading(string receiver)
     {
         if(receiver.Length > 0) {
@@ -372,6 +386,13 @@
         //        currentTrick.Add(player,gameState.CurrentTrick[player]);
         //}
         return gameState.CurrentTrick;
+    }
+    
+    public List<Card> GetLastTrick()
+    {
+        if(showLastTrick == false || gameState == null || gameState.PlayerStates == null)
+            return new List<Card>();
+        return gameState.LastTrick.Values.ToList();
     }
 
     public List<Card> GetOwnCards()
