@@ -14,7 +14,7 @@ namespace BlazorChatSample.Shared
         public Dictionary<string, Card> CurrentTrick { get; set; }
         public Dictionary<string, Card> LastTrick { get; set; }
         public string StartingPlayer { get; set; }
-        public List<string> AllUsers { get; set; }
+        public List<string> UsernameList { get; set; }
         public List<string> ActivePlayers { 
             get{ 
                 if(PlayerStates!=null) 
@@ -35,42 +35,47 @@ namespace BlazorChatSample.Shared
             CurrentTrick = new Dictionary<string, Card>();
             LastTrick = new Dictionary<string, Card>();
         }
-        public GameState(string dealerUsername, List<string> allusers, bool bWithNines)
+        public GameState(string dealerUsername, List<Player> allusers, bool bWithNines)
         {
-            this.AllUsers = allusers;
+            allusers.Sort(Player.Compare);
+            this.UsernameList = new List<string>();
+            foreach(Player p in allusers)
+            {
+                UsernameList.Add(p.name);
+            }
             List<string> activePlayers = new List<string>();
             if (allusers.Count < 4)
             {
                 // only for debugging purposes!
-                activePlayers = allusers;
-                for(int i=allusers.Count;i<4;i++)
+                activePlayers = UsernameList;
+                for(int i=UsernameList.Count;i<4;i++)
                 {
                     activePlayers.Add("player " + (i+1).ToString());
                 }
-                int idxDealer = allusers.IndexOf(dealerUsername);
+                int idxDealer = UsernameList.IndexOf(dealerUsername);
                 int idxStartingPlayer = 0;
                 StartingPlayer = activePlayers[idxStartingPlayer];
                 // throw new System.InvalidOperationException("at least 4 players required");
             }
-            else if (allusers.Count == 4)
+            else if (UsernameList.Count == 4)
             {
-                activePlayers = allusers;
-                int idxDealer = allusers.IndexOf(dealerUsername);
+                activePlayers = UsernameList;
+                int idxDealer = UsernameList.IndexOf(dealerUsername);
                 int idxStartingPlayer = (idxDealer + 1) % 4;
                 StartingPlayer = activePlayers[idxStartingPlayer];
             }
-            else if (allusers.Count == 5)
+            else if (UsernameList.Count == 5)
             {
-                activePlayers = allusers;
-                int idxDealer = allusers.IndexOf(dealerUsername);
+                activePlayers = UsernameList;
+                int idxDealer = UsernameList.IndexOf(dealerUsername);
                 StartingPlayer = activePlayers[(idxDealer+1)%5];
                 activePlayers.Remove(dealerUsername);
             }
-            else if (allusers.Count == 6)
+            else if (UsernameList.Count == 6)
             {
-                activePlayers = allusers;
-                int idxDealer = allusers.IndexOf(dealerUsername);
-                string otherPassingPlayer = allusers[(idxDealer +3)%6];
+                activePlayers = UsernameList;
+                int idxDealer = UsernameList.IndexOf(dealerUsername);
+                string otherPassingPlayer = UsernameList[(idxDealer +3)%6];
                 StartingPlayer = activePlayers[(idxDealer+1)%6];
                 activePlayers.Remove(dealerUsername);
                 activePlayers.Remove(otherPassingPlayer);

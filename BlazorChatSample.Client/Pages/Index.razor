@@ -21,10 +21,11 @@
     @if (!playing)
     {
         <p>
-            Enter your name to start playing:
+            Enter your name and seat number to start playing:
         </p>
-
-        <input type="text" maxlength="32" @bind="@username" />
+    
+        <input type="text" maxlength="32" placeholder="playername" @bind="@username" />
+        <input type="text" maxlength="32" placeholder="1" @bind="@seatnumber" />
         <button type="button" @onclick="@Join"><span class="oi oi-chat" aria-hidden="true"></span> Join!</button>
         @* <div>
             <input type="checkbox" id="hosting" name="hosting" Checked="@hosting">
@@ -218,6 +219,8 @@
 
     // name of the user who will be playing
     string username = null;
+    // where does this person sit?
+    string seatnumber = null;
 
     GameClient client = null;
 
@@ -248,6 +251,17 @@
             message = "Please enter a name";
             return;
         };
+        // check username is valid
+        if (string.IsNullOrWhiteSpace(seatnumber))
+        {
+            message = "Please enter a seat number";
+            return;
+        };
+        try{int.Parse(seatnumber);}
+        catch{
+            message = "Please enter a seat number";
+            return;
+        }
 
         try
         {
@@ -256,7 +270,7 @@
 
             // Create the chat client
             string baseUrl = navigationManager.BaseUri;
-            client = new GameClient(username, baseUrl);
+            client = new GameClient(username, int.Parse(seatnumber), baseUrl);
             // add an event handler for incoming messages
             client.MessageReceived += MessageReceived;
             client.GameUpdateReceived += UpdateGameState;
@@ -482,7 +496,7 @@
         if(gameState == null || gameState.PlayerStates == null)
             return "";
         string playerList = "";
-        foreach(string player in gameState.AllUsers)
+        foreach(string player in gameState.UsernameList)
         {
             playerList += player + ", ";
         }

@@ -19,7 +19,7 @@ namespace BlazorChatSample.Server.Hubs
         /// <remarks>
         /// Needs to be static as the chat is created dynamically a lot
         /// </remarks>
-        private static readonly Dictionary<string, string> userLookup = new Dictionary<string, string>();
+        private static readonly Dictionary<string, Player> userLookup = new Dictionary<string, Player>();
 
         private static GameState gameState;
 
@@ -89,13 +89,16 @@ namespace BlazorChatSample.Server.Hubs
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-        public async Task Register(string username)
+        public async Task Register(string username, int seatnumber)
         {
             var currentId = Context.ConnectionId;
             if (!userLookup.ContainsKey(currentId))
             {
+                Player p = new Player();
+                p.name = username;
+                p.seatnumber = seatnumber;
                 // maintain a lookup of connectionId-to-username
-                userLookup.Add(currentId, username);
+                userLookup.Add(currentId, p);
                 // re-use existing message for now
                 await Clients.AllExcept(currentId).SendAsync(
                     Messages.RECEIVE,
@@ -123,13 +126,15 @@ namespace BlazorChatSample.Server.Hubs
             Console.WriteLine($"Disconnected {e?.Message} {Context.ConnectionId}");
             // try to get connection
             string id = Context.ConnectionId;
-            if (!userLookup.TryGetValue(id, out string username))
-                username = "[unknown]";
+            Player player;
+            if (!userLookup.TryGetValue(id, out player))
+                player.name = "[unknown]";
+
 
             userLookup.Remove(id);
             await Clients.AllExcept(Context.ConnectionId).SendAsync(
                 Messages.RECEIVE,
-                username, $"{username} has left the chat");
+                player.name, $"{player.name} has left the chat");
             await base.OnDisconnectedAsync(e);
         }
 

@@ -8,6 +8,20 @@ using System.Threading.Tasks;
 
 namespace BlazorChatSample.Shared
 {
+    public struct Player{
+        public string name;
+        public int seatnumber;
+
+        public static int Compare(Player p1,Player p2)
+        {
+            if(p1.seatnumber < p2.seatnumber)
+                return -1;
+            else if(p1.seatnumber > p2.seatnumber)
+                return 1;
+            else 
+                return 0;
+        }
+    }
 
     /// <summary>
     /// Generic client class that interfaces .NET Standard/Blazor with SignalR Javascript client
@@ -29,7 +43,7 @@ namespace BlazorChatSample.Shared
         /// <remarks>
         /// Changed client to accept just the base server URL so any client can use it, including ConsoleApp!
         /// </remarks>
-        public GameClient(string username, string siteUrl)
+        public GameClient(string username, int seatnumber, string siteUrl)
         {
             // check inputs
             if (string.IsNullOrWhiteSpace(username))
@@ -38,14 +52,19 @@ namespace BlazorChatSample.Shared
                 throw new ArgumentNullException(nameof(siteUrl));
             // save username
             _username = username;
+            _seatnumber = seatnumber;
             // set the hub URL
             _hubUrl = siteUrl.TrimEnd('/') + HUBURL;
         }
 
         /// <summary>
-        /// Name of the chatter
+        /// Name of the player
         /// </summary>
         private readonly string _username;
+        /// <summary>
+        /// where does this player sit?
+        /// </summary>
+        private readonly int _seatnumber;
 
         /// <summary>
         /// Flag to show if started
@@ -89,7 +108,7 @@ namespace BlazorChatSample.Shared
                 _started = true;
 
                 // register user on hub to let other clients know they've joined
-                await _hubConnection.SendAsync(Messages.REGISTER, _username);
+                await _hubConnection.SendAsync(Messages.REGISTER, _username, _seatnumber);
             }
         }
 
