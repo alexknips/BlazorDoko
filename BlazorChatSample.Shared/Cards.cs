@@ -61,11 +61,6 @@ namespace BlazorChatSample.Shared
         { 
         }
 
-        // public Image GetImage()
-        // {
-        //     return (Image)Cards.ResourceManager.GetObject(GetCardFilename());
-        // }
-
         public string GetCardFilename()
         {
             return GetCardFilename(this.cardType, this.cardColor);
@@ -74,15 +69,6 @@ namespace BlazorChatSample.Shared
         {
             return GetCardName(this.cardType, this.cardColor);
         }
-
-        // public static Image GetBackgroundImage()
-        // {
-        //     return backgroundImage;
-        // }
-        // public static Image GetBackgroundImageRot()
-        // {
-        //     return backgroundImage_rot;
-        // }
 
         public bool IsTrump()
         {
@@ -210,7 +196,7 @@ namespace BlazorChatSample.Shared
             cards = new List<Card>();
             for(int i = 0; i < 4; i++)
             {
-                for(int j=(bWithNines?0:1);j<6;j++)
+                for(int j=(bWithNines?0:1);j<2;j++)
                 {
                     Card c = new Card((CardColor)i, (CardType)j);
                     cards.Add(c);

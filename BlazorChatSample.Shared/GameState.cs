@@ -23,16 +23,18 @@ namespace BlazorChatSample.Shared
             }
         }
 
-        private List<Card> _allPlayedCards;
-        public List<Card> AllPlayedCards {get {
-            if(gamePhase == GamePhase.Done) // return all played cards after end of game
-                return _allPlayedCards;
-            return new List<Card>();        // otherwise empty list
-        }
-        set {_allPlayedCards = value;}}
+
+        public List<Card> AllPlayedCards { get; set; }
+        // private List<Card> _allPlayedCards;
+        // public List<Card> AllPlayedCards {get {
+        //     if(gamePhase == GamePhase.Done) // return all played cards after end of game
+        //         return _allPlayedCards;
+        //     return new List<Card>();        // otherwise empty list
+        // }
+        // set {_allPlayedCards = value;}}
 
         public enum GamePhase{
-            waitingForStart, Playing, Done
+            waitingForStart, Dealt, Playing, Done
         }
         public GamePhase gamePhase { get; set; } = GamePhase.waitingForStart;
 
@@ -42,7 +44,7 @@ namespace BlazorChatSample.Shared
             PlayerStates = new Dictionary<string, PlayerGameState>();
             CurrentTrick = new Dictionary<string, Card>();
             LastTrick = new Dictionary<string, Card>();
-            _allPlayedCards = new List<Card>();
+            AllPlayedCards = new List<Card>();
         }
         public GameState(string dealerUsername, List<Player> allusers, bool bWithNines)
         {
@@ -106,12 +108,15 @@ namespace BlazorChatSample.Shared
                 PlayerStates.Add(activePlayers[i], gameStatePlayer);
             }
 
-            _allPlayedCards = new List<Card>();
+            AllPlayedCards = new List<Card>();
+            gamePhase = GamePhase.Dealt;
         }
 
-        // When a player claims a trick a next trick is started
-        // Thus the lastTrick is the previous CurrentTrick
-        // The CurrentTrick is set to be empty for each player
+        /// <summary>
+        /// When a player claims a trick a next trick is started
+        /// Thus the lastTrick is the previous CurrentTrick
+        /// The CurrentTrick is set to be empty for each player
+        /// </summary>
         public void TrickClaimed(string claimingPlayer)
         {
             LastTrick = new Dictionary<string, Card>(CurrentTrick);
@@ -121,7 +126,7 @@ namespace BlazorChatSample.Shared
             foreach (string players in activePlayers)
             {
                 valueOfTrick += CurrentTrick[players].points;
-                _allPlayedCards.Add(new Card(CurrentTrick[players]));
+                AllPlayedCards.Add(new Card(CurrentTrick[players]));
             }
             PlayerStates[claimingPlayer].Points += valueOfTrick;
             PlayerStates[claimingPlayer].numTricks++;

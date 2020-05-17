@@ -44,7 +44,7 @@
 
         
         <div id="scrollbox">
-            
+            @if(ShowTable()) {
       <div class="container">
             <div class="row">
                 <div class="col">
@@ -162,8 +162,11 @@
                 </div>
             </div>
         </div>
-
+        }
             <div>
+                @if(showLastTrick){
+                    <div>Last trick:</div>
+                }
                 @for (var i = 0;i<GetLastTrick().Count;i++)
                 { 
                     var cardIdx = i;
@@ -172,23 +175,21 @@
             </div>
             
             <div>
+                @if(GetAllPlayedCards().Count > 0){
+                    <div>Game history:</div>
+                }
                 @for (var i = 0;i<GetAllPlayedCards().Count;i++)
                 { 
                     var cardIdx = i;
+                    @if(i % 4 ==0){
+                        <br />
+                        <br />
+                    }
                     <input type="image" src="cards/@(GetAllPlayedCards()[i].ToString()).jpg" width=10%  /> 
                 } 
             </div>
 
-            @* @foreach (var item in messages)
-            {
-                <div class="@item.CSS">
-                    <div class="user">@item.Username</div>
-                    <div class="msg">@item.Body</div>
-                </div>
-            } *@
             <hr />
-            @* <textarea class="input-lg" placeholder="enter your comment" @bind="@newMessage"></textarea> *@
-            @* <button class="btn btn-default" @onclick="@SendAsync">Send</button> *@
             <button class="btn btn-default" @onclick="@(e => Dealing(true))">Deal with Nines</button>
             <button class="btn btn-default" @onclick="@(e => Dealing(false))">Deal without Nines</button>
             @if(GetPlayerBottom() == username){ // this player participates
@@ -206,7 +207,12 @@
                     }
                 }
                 <button class="btn btn-default" @onclick="@Claiming">Claim</button>
-                <button class="btn btn-default" @onclick="@LastTrick">Show last trick</button>
+                @if(showLastTrick){
+                    <button class="btn btn-default" @onclick="@LastTrick">Hide last trick</button>
+                }
+                else {
+                    <button class="btn btn-default" @onclick="@LastTrick">Show last trick</button>
+                }
             }
         </div>
     }
@@ -257,8 +263,9 @@
         // check username is valid
         if (string.IsNullOrWhiteSpace(seatnumber))
         {
-            message = "Please enter a seat number";
-            return;
+            seatnumber = "10"; // sitting at end
+            @* message = "Please enter a seat number"; *@
+            @* return; *@
         };
         try{int.Parse(seatnumber);}
         catch{
@@ -372,14 +379,18 @@
     void Trading(string receiver)
     {
         if(receiver.Length > 0) {
-            Console.WriteLine(username + " wants to trade with " + receiver);
             tradingPartner = receiver;
         }
         else{
-            Console.WriteLine(username + " stops trading with " + receiver);
             tradingPartner = null;
         }
         StateHasChanged();
+    }
+
+    bool ShowTable(){
+        if(gameState == null || gameState.PlayerStates == null)
+            return false;
+        return (gameState.gamePhase == GameState.GamePhase.Playing || gameState.gamePhase == GameState.GamePhase.Dealt);
     }
 
     async Task SendAsync()
@@ -413,8 +424,9 @@
     }
     public List<Card> GetAllPlayedCards()
     {
-        if(gameState == null || gameState.PlayerStates == null)
+        if(gameState == null || gameState.PlayerStates == null || gameState.gamePhase != GameState.GamePhase.Done)
             return new List<Card>();
+        Console.WriteLine((GameState.GamePhase)gameState.gamePhase);
         Console.WriteLine(gameState.AllPlayedCards.Count);
         return gameState.AllPlayedCards;
     }
