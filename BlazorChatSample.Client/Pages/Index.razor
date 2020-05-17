@@ -108,19 +108,21 @@
             <div class="row">
                 <div class="col">
                 </div>
+
                 <div class="col-sm">
-                    @GetPlayerTop()
                     @GetStarting()[2]
                     @GetPlayerTricks(GetPlayerTop())
                     @GetPlayerPoints(GetPlayerTop())
-                    
-                    @for (var i = 0;i<GetPlayerCards(GetPlayerTop()).Count;i++)
-                    { 
-                        var cardIdx = i;
-                        @* <img src="cards/@(GetPlayerCards(GetPlayerTop())[i].ToString()).jpg" width=10% />         *@
-                        <img src="cards/green_back.jpg" width=10%  />
-                    }
+                    <div class="container">
+                        @for (var i = 0;i<GetPlayerCards(GetPlayerTop()).Count;i++)
+                        { 
+                            var cardIdx = i;
+                            <img class="card" src="cards/green_back.jpg" />
+                        }
+                    </div>
+                   
                 </div>
+
                 <div class="col">
                 </div>
             </div>
