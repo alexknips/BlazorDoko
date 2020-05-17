@@ -196,7 +196,7 @@ namespace BlazorChatSample.Shared
             cards = new List<Card>();
             for(int i = 0; i < 4; i++)
             {
-                for(int j=(bWithNines?0:1);j<2;j++)
+                for(int j=(bWithNines?0:1);j<6;j++)
                 {
                     Card c = new Card((CardColor)i, (CardType)j);
                     cards.Add(c);

@@ -61,7 +61,7 @@ namespace BlazorChatSample.Shared
                 activePlayers = UsernameList;
                 for(int i=UsernameList.Count;i<4;i++)
                 {
-                    activePlayers.Add("player " + (i+1).ToString());
+                    activePlayers.Add("player" + (i+1).ToString());
                 }
                 int idxDealer = UsernameList.IndexOf(dealerUsername);
                 int idxStartingPlayer = 0;
@@ -204,6 +204,7 @@ namespace BlazorChatSample.Shared
         {
             Hand = hand;
             Hand.Sort(Card.Compare);
+            Hand.Reverse();
             Points = 0;
             numTricks = 0;
         }
