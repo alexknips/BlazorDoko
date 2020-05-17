@@ -77,10 +77,12 @@
     <div class="content px-4">
         @if (!playing)
         {
+            <span>NOT PLAYING</span>
            // NotPlaying.razor
         }
         else
         {
+             <span>PLAYING</span>
            // Playing.razor
         }
     </div>
@@ -95,8 +97,6 @@
 
     // name of the user who will be playing
     string username = null;
-    // where does this person sit?
-    string seatnumber = null;
 
     GameClient client = null;
 
@@ -121,54 +121,6 @@
     void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
-    }
-
-    /// <summary>
-    /// Start chat client
-    /// </summary>
-    async Task Join()
-    {
-        // check username is valid
-        if (string.IsNullOrWhiteSpace(username))
-        {
-            message = "Please enter a name";
-            return;
-        };
-        // check username is valid
-        if (string.IsNullOrWhiteSpace(seatnumber))
-        {
-            seatnumber = "10"; // sitting at end
-            @* message = "Please enter a seat number"; *@
-            @* return; *@
-        };
-        try{int.Parse(seatnumber);}
-        catch{
-            message = "Please enter a seat number";
-            return;
-        }
-
-        try
-        {
-            // remove old messages if any
-            messages.Clear();
-
-            // Create the chat client
-            string baseUrl = navigationManager.BaseUri;
-            client = new GameClient(username, int.Parse(seatnumber), baseUrl);
-            // add an event handler for incoming messages
-            client.MessageReceived += MessageReceived;
-            client.GameUpdateReceived += UpdateGameState;
-            // start the client
-            await client.StartAsync();
-
-            playing = true;
-        }
-        catch (Exception e)
-        {
-            message = $"ERROR: Failed to start chat client: {e.Message}";
-            Console.WriteLine(e.Message);
-            Console.WriteLine(e.StackTrace);
-        }
     }
 
     /// <summary>
