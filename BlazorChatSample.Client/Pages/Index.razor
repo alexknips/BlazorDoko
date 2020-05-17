@@ -164,17 +164,20 @@
         </div>
 
             <div>
-                        @for (var i = 0;i<GetLastTrick().Count;i++)
-                        { 
-                            var cardIdx = i;
-                            <input type="image" src="cards/@(GetLastTrick()[i].ToString()).jpg" width=10%  /> 
-                        } 
+                @for (var i = 0;i<GetLastTrick().Count;i++)
+                { 
+                    var cardIdx = i;
+                    <input type="image" src="cards/@(GetLastTrick()[i].ToString()).jpg" width=10%  /> 
+                } 
             </div>
-            @* @for (var i = 0;i<GetOwnCards().Count;i++)
-            { 
-                var cardIdx = i;
-                <input type="image" src="cards/@(GetOwnCards()[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
-            }  *@
+            
+            <div>
+                @for (var i = 0;i<GetAllPlayedCards().Count;i++)
+                { 
+                    var cardIdx = i;
+                    <input type="image" src="cards/@(GetAllPlayedCards()[i].ToString()).jpg" width=10%  /> 
+                } 
+            </div>
 
             @* @foreach (var item in messages)
             {
@@ -408,7 +411,13 @@
             return new List<Card>();
         return gameState.LastTrick.Values.ToList();
     }
-
+    public List<Card> GetAllPlayedCards()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return new List<Card>();
+        Console.WriteLine(gameState.AllPlayedCards.Count);
+        return gameState.AllPlayedCards;
+    }
     public List<Card> GetOwnCards()
     {
         if(gameState == null || gameState.PlayerStates == null)

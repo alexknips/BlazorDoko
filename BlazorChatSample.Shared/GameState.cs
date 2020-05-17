@@ -23,6 +23,14 @@ namespace BlazorChatSample.Shared
             }
         }
 
+        private List<Card> _allPlayedCards;
+        public List<Card> AllPlayedCards {get {
+            if(gamePhase == GamePhase.Done) // return all played cards after end of game
+                return _allPlayedCards;
+            return new List<Card>();        // otherwise empty list
+        }
+        set {_allPlayedCards = value;}}
+
         public enum GamePhase{
             waitingForStart, Playing, Done
         }
@@ -34,6 +42,7 @@ namespace BlazorChatSample.Shared
             PlayerStates = new Dictionary<string, PlayerGameState>();
             CurrentTrick = new Dictionary<string, Card>();
             LastTrick = new Dictionary<string, Card>();
+            _allPlayedCards = new List<Card>();
         }
         public GameState(string dealerUsername, List<Player> allusers, bool bWithNines)
         {
@@ -96,6 +105,8 @@ namespace BlazorChatSample.Shared
                 var gameStatePlayer = new PlayerGameState(deck.GetCardsForPlayer(i));
                 PlayerStates.Add(activePlayers[i], gameStatePlayer);
             }
+
+            _allPlayedCards = new List<Card>();
         }
 
         // When a player claims a trick a next trick is started
@@ -110,6 +121,7 @@ namespace BlazorChatSample.Shared
             foreach (string players in activePlayers)
             {
                 valueOfTrick += CurrentTrick[players].points;
+                _allPlayedCards.Add(new Card(CurrentTrick[players]));
             }
             PlayerStates[claimingPlayer].Points += valueOfTrick;
             PlayerStates[claimingPlayer].numTricks++;
@@ -147,7 +159,6 @@ namespace BlazorChatSample.Shared
             {
                 throw new System.Exception("could not remove card although it was played");
             }
-
         }
 
         public void CardWithdrawn(string withdrawingUser)
