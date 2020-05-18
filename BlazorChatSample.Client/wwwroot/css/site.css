@@ -5,6 +5,7 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+<<<<<<< HEAD
 /* cards */
 
 .container {
@@ -20,6 +21,22 @@ body {
   height: 140px;
   width: 100px;
   box-shadow: -1rem 0 1rem rgb(33, 33, 33);
+=======
+/* cards */ 
+.cards-container {
+    position: relative;
+    /* height: 300px;
+    width: 600px;
+    top: 60px; */
+    display: flex;
+  }
+  
+  .card {
+    display: flex;
+    height: 140px;
+    width: 100px;
+    box-shadow: -1rem 0 1rem rgb(33, 33, 33);
+>>>>>>> cards-container class
   /*   margin-left: -50px; */
   transition: 0.3s ease-out;
   position: relative;

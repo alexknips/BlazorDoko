@@ -2,6 +2,7 @@
 @page "/"
 @inject NavigationManager navigationManager
 
+<<<<<<< HEAD
 <div class="sidebar">
     <div class="top-row pl-4 navbar navbar-dark">
         <a class="navbar-brand" href="">Doppelkopf</a>
@@ -35,6 +36,109 @@
                                     <NavLink class="nav-link" @onclick="@(e => Trading(GetPlayerRight()))">
                                         Trade Cards with @GetPlayerRight()
                                     </NavLink>
+=======
+
+<div class="top-row px-4">
+    @if (playing)
+    {
+        <p>You are connected as <b>@username</b></p>
+        @if(playerlist != null){
+            <br /><p>On the server: @playerlist</p>
+        }
+        <button class="btn btn-sm btn-warning ml-md-auto" @onclick="@DisconnectAsync">Disconnect</button>
+    }
+</div>
+
+<div class="content px-4">
+
+    @* <h1>Doppelkopf</h1> *@
+
+    @if (!playing)
+    {
+        <p>
+            Enter your name and seat number to start playing:
+        </p>
+    
+        <input type="text" maxlength="32" placeholder="playername" @bind="@username" />
+        <input type="text" maxlength="32" placeholder="1" @bind="@seatnumber" />
+        <button type="button" @onclick="@Join"><span class="oi oi-chat" aria-hidden="true"></span> Join!</button>
+        @* <div>
+            <input type="checkbox" id="hosting" name="hosting" Checked="@hosting">
+            <label for="hosting">host</label>
+        </div> *@
+
+        @if (message != null)
+        {
+            <div class="invalid-feedback">@message</div>
+            <small id="emailHelp" class="form-text text-muted">@message</small>
+        }
+    }
+
+    @if (playing)
+    {
+
+        
+        <div id="scrollbox">
+            @if(ShowTable()) {
+      <div class="container">
+            <div class="row">
+                <div class="col">
+                </div>
+
+                <div class="col-sm">
+                    @GetStarting()[2]
+                    @GetPlayerTricks(GetPlayerTop())
+                    @GetPlayerPoints(GetPlayerTop())
+                    <div class="cards-container">
+                        @for (var i = 0;i<GetPlayerCards(GetPlayerTop()).Count;i++)
+                        { 
+                            var cardIdx = i;
+                            <img class="card" src="cards/green_back.jpg" />
+                        }
+
+                    </div>
+                   
+                </div>
+
+                <div class="col">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    @GetPlayerLeft()
+                    @GetStarting()[1]
+                    @GetPlayerTricks(GetPlayerLeft())
+                    @GetPlayerPoints(GetPlayerLeft())
+                    <div class="rotate">
+                        <div class="cards-container">
+                        @for (var i = 0;i<GetPlayerCards(GetPlayerLeft()).Count;i++)
+                        { 
+                            var cardIdx = i;
+                            <img class="card" src="cards/green_back.jpg" />
+                        }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm">
+                Tischmitte
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                            </div>
+                            <div class="col-sm">
+                                @if(GetCardsTable().Keys.Contains(GetPlayerTop())){
+                                    <img src="cards/@(GetCardsTable()[GetPlayerTop()].ToString()).jpg" width=20%  />
+                                }
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                @if(GetCardsTable().Keys.Contains(GetPlayerLeft())){
+                                    <img src="cards/@(GetCardsTable()[GetPlayerLeft()].ToString()).jpg" width=20%   />
+>>>>>>> cards-container class
                                 }
                                 else
                                 {
@@ -42,7 +146,61 @@
                                         Stop trading
                                     </NavLink>
                                 }
+<<<<<<< HEAD
                             }
+=======
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                            </div>
+                            <div class="col-sm">
+                                @if(GetCardsTable().Keys.Contains(GetPlayerBottom())){
+                                    <input type="image" src="cards/@(GetCardsTable()[GetPlayerBottom()].ToString()).jpg"  width=20% @onclick="@ClickCardTable"/>
+                                }
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col">
+                    @GetPlayerRight()
+                    @GetStarting()[3]
+                    @GetPlayerTricks(GetPlayerRight())
+                    @GetPlayerPoints(GetPlayerRight())
+                       <div class="rotate">
+                        <div class="cards-container">
+                        @for (var i = 0;i<GetPlayerCards(GetPlayerRight()).Count;i++)
+                        { 
+                            var cardIdx = i;
+                            <img class="card" src="cards/green_back.jpg" />
+                        }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                </div>
+                <div class="col-sm">
+                    @GetPlayerBottom()
+                    @GetStarting()[0]
+                    @GetPlayerTricks(GetPlayerBottom())
+                    @GetPlayerPoints(GetPlayerBottom())
+
+                      <div class="cards-container">
+                           @for (var i = 0;i<GetPlayerCards(GetPlayerBottom()).Count;i++)
+                    { 
+                        var cardIdx = i;
+                        @if(GetPlayerBottom() == username){
+                            <input type="image" src="cards/@(GetPlayerCards(GetPlayerBottom())[i].ToString()).jpg" width=20% @onclick="@(e => ClickCard(cardIdx))" />
+                        }
+                        else
+                        {
+                            <img src="cards/green_back.jpg" width=20%  />
+>>>>>>> cards-container class
                         }
                         @if(showLastTrick){
                             <NavLink class="nav-link" @onclick="@LastTrick">
