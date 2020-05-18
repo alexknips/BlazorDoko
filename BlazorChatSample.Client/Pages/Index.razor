@@ -1,4 +1,4 @@
-﻿@inherits IndexComponent
+﻿@using BlazorChatSample.Shared 
 @page "/"
 @inject NavigationManager navigationManager
 
@@ -85,7 +85,347 @@
         }
     </div>
 </div>
+@code  {
+    // flag to indicate chat status
+    bool playing = false;
 
-@code {
+    bool roundStarted = false;  // true between first and last played card
+    //bool hosting = false;
+    string playerlist = null;
 
+    // name of the user who will be playing
+    string username = null;
+    // where does this person sit?
+    string seatnumber = null;
+
+    GameClient client = null;
+
+    // on-screen message
+    string message = null;
+
+    // new message input
+    string newMessage = null;
+
+    string tradingPartner = null;
+
+    // list of messages in chat
+    List<Message> messages = new List<Message>();
+
+    // current gameState of the client
+    GameState gameState = null;
+
+    bool showLastTrick = false;
+
+    bool collapseNavMenu = true;
+    
+    void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    /// <summary>
+    /// Start chat client
+    /// </summary>
+    async Task Join()
+    {
+        // check username is valid
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            message = "Please enter a name";
+            return;
+        };
+        // check username is valid
+        if (string.IsNullOrWhiteSpace(seatnumber))
+        {
+            seatnumber = "10"; // sitting at end
+            @* message = "Please enter a seat number"; *@
+            @* return; *@
+        };
+        try{int.Parse(seatnumber);}
+        catch{
+            message = "Please enter a seat number";
+            return;
+        }
+
+        try
+        {
+            // remove old messages if any
+            messages.Clear();
+
+            // Create the chat client
+            string baseUrl = navigationManager.BaseUri;
+            client = new GameClient(username, int.Parse(seatnumber), baseUrl);
+            // add an event handler for incoming messages
+            client.MessageReceived += MessageReceived;
+            client.GameUpdateReceived += UpdateGameState;
+            // start the client
+            await client.StartAsync();
+
+            playing = true;
+        }
+        catch (Exception e)
+        {
+            message = $"ERROR: Failed to start chat client: {e.Message}";
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.StackTrace);
+        }
+    }
+
+    /// <summary>
+    /// Inbound message
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    void MessageReceived(object sender, MessageReceivedEventArgs e)
+    {
+        Console.WriteLine($"Blazor: receive {e.Username}: {e.Message}");
+        bool isMine = false;
+        if (!string.IsNullOrWhiteSpace(e.Username))
+        {
+            isMine = string.Equals(e.Username, username, StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        var newMsg = new Message(e.Username, e.Message, isMine);
+        messages.Add(newMsg);
+
+        // Inform blazor the UI needs updating
+        StateHasChanged();
+    }
+
+    async Task DisconnectAsync()
+    {
+        if (playing)
+        {
+            await client.StopAsync();
+            client = null;
+            message = "chat ended";
+            playing = false;
+        }
+    }
+
+    void UpdateGameState(object sender, GameUpdateEventArgs e)
+    {
+        Console.WriteLine($"Blazor: receive update game state");
+        @* if(client!= null)
+            client.gameState = e.GameState; *@
+        gameState = e.GameState;
+        roundStarted = (gameState.gamePhase == GameState.GamePhase.Playing);
+        playerlist = GetPlayerList();
+        Console.WriteLine(playerlist);
+        
+        StateHasChanged();
+    }
+
+    async Task ClickCard(int idx)
+    {
+        if(gameState.ActivePlayers.Contains(username)) {
+            if(tradingPartner == null) {
+                await client.PlayCard(GetOwnCards()[idx]);
+            }
+            else {
+                await client.OfferCard(tradingPartner, GetOwnCards()[idx]);
+            }
+        }
+    }
+
+    async Task ClickCardTable()
+    {
+        if(gameState.ActivePlayers.Contains(username)) {
+            Console.WriteLine("card clicked");
+            await client.WithdrawCard();
+        }
+    }
+    async Task Dealing(bool bWithNines)
+    {
+        await client.ReqDealing(bWithNines);
+    }
+    async Task Claiming()
+    {
+        Console.WriteLine("Claiming");
+        await client.Claiming();
+    }
+
+    public void LastTrick()
+    {
+        showLastTrick = !showLastTrick;
+    }
+
+    void Trading(string receiver)
+    {
+        if(receiver.Length > 0) {
+            tradingPartner = receiver;
+        }
+        else{
+            tradingPartner = null;
+        }
+        StateHasChanged();
+    }
+
+    bool ShowTable(){
+        if(gameState == null || gameState.PlayerStates == null)
+            return false;
+        return (gameState.gamePhase == GameState.GamePhase.Playing || gameState.gamePhase == GameState.GamePhase.Dealt);
+    }
+
+    async Task SendAsync()
+    {
+        if (playing && !string.IsNullOrWhiteSpace(newMessage))
+        {
+            await client.SendAsync(newMessage);
+            newMessage = "";
+        }
+        
+    }
+
+    public Dictionary<string,Card> GetCardsTable()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return new Dictionary<string,Card>();
+        //Dictionary<string,Card> currentTrick = new Dictionary<string,Card>();
+        //foreach(string player in gameState.CurrentTrick.Keys)
+        //{
+        //    if(gameState.CurrentTrick[player]!= null)
+        //        currentTrick.Add(player,gameState.CurrentTrick[player]);
+        //}
+        return gameState.CurrentTrick;
+    }
+    
+    public List<Card> GetLastTrick()
+    {
+        if(showLastTrick == false || gameState == null || gameState.PlayerStates == null)
+            return new List<Card>();
+        return gameState.LastTrick.Values.ToList();
+    }
+    public List<Card> GetAllPlayedCards()
+    {
+        if(gameState == null || gameState.PlayerStates == null || gameState.gamePhase != GameState.GamePhase.Done)
+            return new List<Card>();
+        Console.WriteLine((GameState.GamePhase)gameState.gamePhase);
+        Console.WriteLine(gameState.AllPlayedCards.Count);
+        return gameState.AllPlayedCards;
+    }
+    public List<Card> GetOwnCards()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return new List<Card>();
+        if(gameState.PlayerStates.Keys.Contains(username))
+            return gameState.PlayerStates[username].Hand;
+        return new List<Card>();
+    }
+    public List<Card> GetPlayerCards(string playerName)
+    {
+        if(gameState == null || gameState.PlayerStates == null || playerName == "")
+            return new List<Card>();
+        if(gameState.PlayerStates.Keys.Contains(playerName))
+            return gameState.PlayerStates[playerName].Hand;
+        return new List<Card>();
+    }
+
+    public int GetPlayerTricks(string playerName)
+    {
+        if(gameState == null || gameState.PlayerStates == null || playerName == "")
+            return 0;
+        return gameState.PlayerStates[playerName].numTricks;
+    }
+    public int GetPlayerPoints(string playerName)
+    {
+        if(gameState == null || gameState.PlayerStates == null || playerName == "")
+            return 0;
+        return gameState.PlayerStates[playerName].Points;
+    }
+
+    public int GetBottomPlayerIdx()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return -1;
+        if(gameState.ActivePlayers.Contains(username)) // player participates
+        {
+            return gameState.ActivePlayers.IndexOf(username);
+        }
+        return 0;
+    }
+    public string GetPlayerBottom()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return "";
+        
+        return gameState.ActivePlayers[(GetBottomPlayerIdx())%4];   // own player - or who is sitting there instead
+    }
+    public string GetPlayerLeft()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return "";
+        return gameState.ActivePlayers[(GetBottomPlayerIdx() + 1)%4];   // left of own player
+    }
+    public string GetPlayerTop()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return "";
+        return gameState.ActivePlayers[(GetBottomPlayerIdx() + 2)%4];   // top of own player
+    }
+    public string GetPlayerRight()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return "";
+        return gameState.ActivePlayers[(GetBottomPlayerIdx() + 3)%4];   // right of own player
+    }
+
+    public List<string> GetStarting()
+    {
+        List<string> startingString = new List<string>() {"","","",""};
+        if(gameState == null || gameState.PlayerStates == null)
+            return startingString;
+        if(gameState.StartingPlayer == username)
+            startingString[0] = "*";
+        if(gameState.StartingPlayer == GetPlayerLeft())
+            startingString[1] = "*";
+        if(gameState.StartingPlayer == GetPlayerTop())
+            startingString[2] = "*";
+        if(gameState.StartingPlayer == GetPlayerRight())
+            startingString[3] = "*";
+        return startingString;
+    }
+
+    public string GetPlayerList()
+    {
+        if(gameState == null || gameState.PlayerStates == null)
+            return "";
+        string playerList = "";
+        foreach(string player in gameState.UsernameList)
+        {
+            playerList += player + ", ";
+        }
+        Console.WriteLine(playerList);
+        try{
+            return playerList.Substring(0, Math.Max(0, playerList.Length-2)); // cut away last 2 chars (", ")
+        }
+        catch{
+            return playerList;
+        }
+    }
+
+    class Message
+    {
+        public Message(string username, string body, bool mine)
+        {
+            Username = username;
+            Body = body;
+            Mine = mine;
+        }
+
+        public string Username { get; set; }
+        public string Body { get; set; }
+        public bool Mine { get; set; }
+
+        /// <summary>
+        /// Determine CSS classes to use for message div
+        /// </summary>
+        public string CSS
+        {
+            get
+            {
+                return Mine ? "sent" : "received";
+            }
+        }
+    }
 }
