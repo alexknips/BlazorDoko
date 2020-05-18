@@ -1,0 +1,132 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="col">
+        </div>
+
+        <div class="col-sm">
+            @GetStarting()[2]
+            @GetPlayerTricks(GetPlayerTop())
+            @GetPlayerPoints(GetPlayerTop())
+            <div class="container">
+                @for (var i = 0;i<GetPlayerCards(GetPlayerTop()).Count;i++)
+                { 
+                    var cardIdx = i;
+                    <img class="card" src="cards/green_back.jpg" />
+                }
+            </div>
+        </div>
+
+        <div class="col">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            @GetPlayerLeft()
+            @GetStarting()[1]
+            @GetPlayerTricks(GetPlayerLeft())
+            @GetPlayerPoints(GetPlayerLeft())
+            <div class="rotate">
+                <div class="container">
+                @for (var i = 0;i<GetPlayerCards(GetPlayerLeft()).Count;i++)
+                { 
+                    var cardIdx = i;
+                    <img class="card" src="cards/green_back.jpg" />
+                }
+                </div>
+            </div>
+        </div>
+        <div class="col-sm">
+        @* Tischmitte *@
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                    </div>
+                    <div class="col-sm">
+                        <div class="cardtable">
+                        @if(GetCardsTable().Keys.Contains(GetPlayerTop())){
+                            <img src="cards/@(GetCardsTable()[GetPlayerTop()].ToString()).jpg" width=50%  />
+                        }
+                        </div>
+                    </div>
+                    <div class="col">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="cardtable">
+                        @if(GetCardsTable().Keys.Contains(GetPlayerLeft())){
+                            <img src="cards/@(GetCardsTable()[GetPlayerLeft()].ToString()).jpg" width=50%   />
+                        }
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                    </div>
+                    <div class="col">
+                        <div class="cardtable">
+                        @if(GetCardsTable().Keys.Contains(GetPlayerRight())){
+                            <img src="cards/@(GetCardsTable()[GetPlayerRight()].ToString()).jpg"  />
+                        }
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                    </div>
+                    <div class="col-sm">
+                        <div class="cardtable">
+                        @if(GetCardsTable().Keys.Contains(GetPlayerBottom())){
+                            <input type="image" src="cards/@(GetCardsTable()[GetPlayerBottom()].ToString()).jpg"  @onclick="@ClickCardTable"/>
+                        }
+                        </div>
+                    </div>
+                    <div class="col">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col">
+            @GetPlayerRight()
+            @GetStarting()[3]
+            @GetPlayerTricks(GetPlayerRight())
+            @GetPlayerPoints(GetPlayerRight())
+            <div class="rotate">
+                <div class="container">
+                @for (var i = 0;i<GetPlayerCards(GetPlayerRight()).Count;i++)
+                { 
+                    var cardIdx = i;
+                    <img class="card" src="cards/green_back.jpg" />
+                }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+        </div>
+        <div class="col-sm">
+            <div class="cardcontainer">
+            @GetPlayerBottom()
+            @GetStarting()[0]
+            @GetPlayerTricks(GetPlayerBottom())
+            @GetPlayerPoints(GetPlayerBottom())
+            <div class="container">
+                @for (var i = 0;i<GetPlayerCards(GetPlayerBottom()).Count;i++)
+            { 
+                var cardIdx = i;
+                @if(GetPlayerBottom() == username){
+                    <div class="card">
+                        <input type="image" src="cards/@(GetPlayerCards(GetPlayerBottom())[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
+                    </div>
+                }
+                else
+                {
+                    <img src="cards/green_back.jpg" width=20%  />
+                }
+            } 
+            </div>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>

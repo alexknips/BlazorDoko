@@ -1,0 +1,17 @@
+﻿<p>
+    Enter your name and seat number to start playing:
+</p>
+
+<input type="text" maxlength="32" placeholder="playername" @bind="@username" />
+<input type="text" maxlength="32" placeholder="1" @bind="@seatnumber" />
+<button type="button" @onclick="@Join"><span class="oi oi-chat" aria-hidden="true"></span> Join!</button>
+@* <div>
+    <input type="checkbox" id="hosting" name="hosting" Checked="@hosting">
+    <label for="hosting">host</label>
+</div> *@
+
+@if (message != null)
+{
+    <div class="invalid-feedback">@message</div>
+    <small id="emailHelp" class="form-text text-muted">@message</small>
+}
