@@ -1,0 +1,61 @@
+/* cards */
+
+.my-card {
+  width: 12%;
+  box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
+  /*   margin-left: -50px; */
+  transition: 0.3s ease-out;
+  position: relative;
+  left: 5%;
+}
+
+.my-card:not(:first-child) {
+  margin-left: -5%;
+}
+
+.my-card:hover {
+  transform: translateY(-20px);
+  transition: 0.3s ease-out;
+}
+
+.my-card:hover ~ .playing-card {
+  position: relative;
+  left: 5%;
+  transition: 0.3s ease-out;
+}
+
+.their-card {
+  width: 12%;
+  box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
+  /*   margin-left: -50px; */
+  transition: 0.3s ease-out;
+  position: relative;
+  left: 5%;
+}
+
+.their-card:not(:first-child) {
+  margin-left: -5%;
+}
+
+.rotate.their-card {
+  top: 12%;
+  box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
+  /*   margin-left: -50px; */
+  transition: 0.3s ease-out;
+  position: relative;
+  left: 5%;
+}
+
+.rotate.their-card:not(:first-child) {
+  margin-left: -5%;
+}
+
+/* cards */
+
+.rotate {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+}

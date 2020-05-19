@@ -1,0 +1,34 @@
+﻿.grid {
+  display: grid;
+  grid-template-columns: 20vw 60vw 20vw;
+  grid-template-rows: 20vh 60vh 20vh;
+}
+
+.right,
+.middle,
+.left {
+  background: #eaeaea;
+  padding: 1em;
+}
+
+.middle {
+  background: #7266b4;
+  padding: 1em;
+}
+
+.top,
+.bottom {
+  background: #8f3131;
+  padding: 1em;
+}
+
+.top,
+.bottom {
+  grid-column: 2 / 3;
+}
+
+.grid > * {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
