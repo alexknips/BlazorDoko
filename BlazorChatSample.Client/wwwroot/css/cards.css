@@ -1,16 +1,16 @@
 .playing-card {
-  max-height: 100%;
-  width: 50px;
+  width: 6%;
   box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
   position: relative;
 }
 
 .playing-card:not(:first-child) {
-  margin-left: -10px;
+  margin-left: -2%;
 }
 
 .rot-playing-card {
-  width: 50px;
+  height: 8%;
+  max-width: 100%;
   box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
   -webkit-transform: rotate(-90deg);
   -moz-transform: rotate(-90deg);
@@ -20,19 +20,19 @@
 }
 
 .rot-playing-card:not(:first-child) {
-  margin-top: -50px;
+  margin-top: 0;
 }
 
 .my-card {
   max-height: 100%;
-  width: 100px;
+  width: 12%;
   box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
   transition: 0.3s ease-out;
   position: relative;
 }
 
 .my-card:not(:first-child) {
-  margin-left: -30px;
+  margin-left: -4%;
 }
 .my-card:hover {
   transform: translateY(-30px);

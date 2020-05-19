@@ -5,21 +5,22 @@
 }
 
 .right,
-.middle,
 .left {
-  background: #eaeaea;
-  padding: 1em;
+  flex-direction: column;
 }
 
-.middle {
-  background: #7266b4;
-  padding: 1em;
+.top {
+  background: #ff85cf;
 }
 
-.top,
+.right {
+  grid-row: 1 / 4;
+  grid-column: 3 / 4;
+  background: #e179e8;
+}
+
 .bottom {
-  background: #8f3131;
-  padding: 1em;
+  background: #da91ff;
 }
 
 .top,
@@ -27,15 +28,18 @@
   grid-column: 2 / 3;
 }
 
-.right,
 .left {
-  align-self: stretch;
-  flex-direction: column;
+  grid-row: 1 / 4;
+  grid-column: 1 / 2;
+  background: #a579e8;
+}
+
+.middle {
+  background: #9385ff;
 }
 
 .buttonrow {
-  background: #966262;
-  padding: 1em;
+  background: #665454;
   grid-column: 1 / 4;
 }
 
