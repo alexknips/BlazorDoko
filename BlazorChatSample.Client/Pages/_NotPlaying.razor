@@ -1,6 +1,4 @@
-﻿@using BlazorChatSample.Shared 
-
-<p>
+﻿<p>
     Enter your name and seat number to start playing:
 </p>
 
@@ -22,7 +20,7 @@
     [Parameter]
     public string seatnumber { get; set; }
     [Parameter]
-    public EventCallback<Player> Join { get; set; }
+    public EventCallback<BlazorChatSample.Shared.Player> Join { get; set; }
 
     private async Task Joining()
     {
@@ -45,7 +43,7 @@
             return;
         }
 
-        Player p = new Player();
+        BlazorChatSample.Shared.Player p = new BlazorChatSample.Shared.Player();
         p.name = username;
         p.seatnumber = int.Parse(seatnumber);
 

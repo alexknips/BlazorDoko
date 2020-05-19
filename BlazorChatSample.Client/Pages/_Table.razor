@@ -1,15 +1,96 @@
-﻿﻿@using BlazorChatSample.Shared
+﻿ @* <div class="grid-container"> *@
+  <div class="itemLeft">
+        @* <div class="rotate"> *@
+        <div class="cardcontainerleft">
+        <div class="containersmall">
+        @playerStrings[1]
+        @for (var i = 0;i<cardsLeft.Count;i++)
+        { 
+            var cardIdx = i;
+            <img class="card" src="cards/green_back.jpg" />
+        }
+        </div>
+        </div>
+    @* </div> *@
+  </div>
+  <div class="itemRight">
+        <div class="cardcontainerright">
+    @* <div class="rotate"> *@
+        <div class="containersmall">
+        @playerStrings[3]
+        @for (var i = 0;i<cardsRight.Count;i++)
+        { 
+            var cardIdx = i;
+            <img class="card" src="cards/green_back.jpg" />
+        }
+        </div>
+        @* </div> *@
+    </div>
+  </div>
+  <div class="itemTop">
+      <div class="cardcontainertop">
+        <div class="containersmall">
+        @playerStrings[2]
+        @for (var i = 0;i<cardsTop.Count;i++)
+        { 
+            var cardIdx = i;
+            <img class="card" src="cards/green_back.jpg" />
+        }
+        </div>
+        </div>
+  </div>
+  <div class="itemBottom">
+    <div class="cardcontainer">
+        @playerStrings[0]
+            @for (var i = 0;i<cardsBottom.Count;i++)
+            { 
+                var cardIdx = i;
+                @if(activelyPlaying){
+                    <div class="card">
+                        <input type="image" src="cards/@(cardsBottom[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
+                    </div>
+                }
+                else
+                {
+                    <img src="cards/green_back.jpg" width=20%  />
+                }
+            }
+    </div>
+
+  </div>
+@* </div>  *@
+
+<div class="cardTable">
+<div class="cardTop">
+@if(cardsTable.Keys.Contains(playerNames[2])){
+    <img src="cards/@(cardsTable[playerNames[2]].ToString()).jpg"  />
+}
+</div>
+<div class="cardLeft">
+@if(cardsTable.Keys.Contains(playerNames[1])){
+    <img src="cards/@(cardsTable[playerNames[1]].ToString()).jpg"  />
+}
+</div>
+<div class="cardRight">
+@if(cardsTable.Keys.Contains(playerNames[3])){
+    <img src="cards/@(cardsTable[playerNames[3]].ToString()).jpg"  />
+}
+</div>
+<div class="cardBottom">
+@if(cardsTable.Keys.Contains(playerNames[0])){
+    <input type="image" src="cards/@(cardsTable[playerNames[0]].ToString()).jpg"  @onclick="@(e => ClickCardTable())"/>
+}
+</div></div>
 
 
-<div class="container">
+
+
+@* <div class="container">
     <div class="row">
         <div class="col">
         </div>
 
         <div class="col-sm">
-            @* @GetStarting()[2]
-            @GetPlayerTricks(GetPlayerTop())
-            @GetPlayerPoints(GetPlayerTop()) *@
             @playerStrings[2]
             <div class="container">
                 @for (var i = 0;i<cardsTop.Count;i++)
@@ -25,10 +106,6 @@
     </div>
     <div class="row">
         <div class="col">
-            @* @GetPlayerLeft()
-            @GetStarting()[1]
-            @GetPlayerTricks(GetPlayerLeft())
-            @GetPlayerPoints(GetPlayerLeft()) *@
             @playerStrings[1]
             <div class="rotate">
                 <div class="container">
@@ -47,9 +124,9 @@
                     </div>
                     <div class="col-sm">
                         <div class="cardtable">
-                        @* @if(GetCardsTable().Keys.Contains(GetPlayerTop())){
-                            <img src="cards/@(GetCardsTable()[GetPlayerTop()].ToString()).jpg" width=50%  />
-                        } *@
+                        @if(cardsTable.Keys.Contains(playerNames[2])){
+                            <img src="cards/@(cardsTable[playerNames[2]].ToString()).jpg" width=50%  />
+                        }
                         </div>
                     </div>
                     <div class="col">
@@ -58,18 +135,18 @@
                 <div class="row">
                     <div class="col">
                         <div class="cardtable">
-                        @* @if(GetCardsTable().Keys.Contains(GetPlayerLeft())){
-                            <img src="cards/@(GetCardsTable()[GetPlayerLeft()].ToString()).jpg" width=50%   />
-                        } *@
+                        @if(cardsTable.Keys.Contains(playerNames[1])){
+                            <img src="cards/@(cardsTable[playerNames[1]].ToString()).jpg" width=50%   />
+                        }
                         </div>
                     </div>
                     <div class="col-sm">
                     </div>
                     <div class="col">
                         <div class="cardtable">
-                        @* @if(GetCardsTable().Keys.Contains(GetPlayerRight())){
-                            <img src="cards/@(GetCardsTable()[GetPlayerRight()].ToString()).jpg"  />
-                        } *@
+                        @if(cardsTable.Keys.Contains(playerNames[3])){
+                            <img src="cards/@(cardsTable[playerNames[3]].ToString()).jpg"  />
+                        }
                         </div>
                     </div>
                 </div>
@@ -78,9 +155,9 @@
                     </div>
                     <div class="col-sm">
                         <div class="cardtable">
-                        @* @if(GetCardsTable().Keys.Contains(GetPlayerBottom())){
-                            <input type="image" src="cards/@(GetCardsTable()[GetPlayerBottom()].ToString()).jpg"  @onclick="@ClickCardTable"/>
-                        } *@
+                        @if(cardsTable.Keys.Contains(playerNames[0])){
+                            <input type="image" src="cards/@(cardsTable[playerNames[0]].ToString()).jpg"  @onclick="@(e => ClickCardTable())"/>
+                        }
                         </div>
                     </div>
                     <div class="col">
@@ -90,10 +167,6 @@
 
         </div>
         <div class="col">
-            @* @GetPlayerRight()
-            @GetStarting()[3]
-            @GetPlayerTricks(GetPlayerRight())
-            @GetPlayerPoints(GetPlayerRight()) *@
             @playerStrings[3]
             <div class="rotate">
                 <div class="container">
@@ -111,10 +184,6 @@
         </div>
         <div class="col-sm">
             <div class="cardcontainer">
-            @* @GetPlayerBottom()
-            @GetStarting()[0]
-            @GetPlayerTricks(GetPlayerBottom())
-            @GetPlayerPoints(GetPlayerBottom()) *@
             @playerStrings[0]
                 <div class="container">
                 @for (var i = 0;i<cardsBottom.Count;i++)
@@ -136,39 +205,39 @@
         <div class="col">
         </div>
     </div>
-</div>
+</div> *@
 
 
 @code {
     [Parameter]
-    public List<Card> cardsLeft { get; set; }
+    public List<BlazorChatSample.Shared.Card> cardsLeft { get; set; }
     [Parameter]
-    public List<Card> cardsTop { get; set; }
+    public List<BlazorChatSample.Shared.Card> cardsTop { get; set; }
     [Parameter]
-    public List<Card> cardsRight { get; set; }
+    public List<BlazorChatSample.Shared.Card> cardsRight { get; set; }
     [Parameter]
-    public List<Card> cardsBottom { get; set; }
+    public List<BlazorChatSample.Shared.Card> cardsBottom { get; set; }
     [Parameter]
-    public Dictionary<string,Card> cardsTable { get; set; }
+    public Dictionary<string,BlazorChatSample.Shared.Card> cardsTable { get; set; }
     [Parameter]
     public bool activelyPlaying { get; set; }
 
     [Parameter]
     public List<string> playerStrings { get; set; }
+    [Parameter]
+    public List<string> playerNames { get; set; }
 
+    [Parameter]
     public EventCallback<int> CardClicked { get; set; }
+    [Parameter]
     public EventCallback<int> CardClickedTable { get; set; }
     
     private async Task ClickCard(int idx)
     {
         if(activelyPlaying) {
+            Console.WriteLine("clicked card " + idx.ToString() );
+            Console.WriteLine(CardClicked.HasDelegate);
             await CardClicked.InvokeAsync(idx);
-            @* if(tradingPartner == null) {
-                await client.PlayCard(GetOwnCards()[idx]);
-            }
-            else {
-                await client.OfferCard(tradingPartner, GetOwnCards()[idx]);
-            } *@
         }
     }
 
@@ -177,9 +246,5 @@
         if(activelyPlaying){
             await CardClickedTable.InvokeAsync(0);
         }
-        @* if(gameState.ActivePlayers.Contains(username)) {
-            Console.WriteLine("card clicked");
-            await client.WithdrawCard();
-        } *@
     }
 }

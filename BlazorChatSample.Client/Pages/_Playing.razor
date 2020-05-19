@@ -1,22 +1,14 @@
-﻿@using BlazorChatSample.Shared 
-
-<div id="scrollbox">
-    @if(showTable) {
-        <_Table cardsLeft="@cardsLeft" cardsRight="@cardsRight" cardsTop="@cardsTop" 
-        cardsBottom="@cardsBottom" cardsTable="@cardsTable" activelyPlaying="@activelyPlaying" 
-        playerStrings="@playerStrings"
-        />
-    }
+﻿<div id="scrollbox">
 
     <div>
         @if(showLastTrick){
             <div>Last trick:</div>
+            @for (var i = 0;i<lastTrick.Count;i++)
+            { 
+                var cardIdx = i;
+                <input type="image" src="cards/@(lastTrick[i].ToString()).jpg" width=10%  /> 
+            } 
         }
-        @for (var i = 0;i<lastTrick.Count;i++)
-        { 
-            var cardIdx = i;
-            <input type="image" src="cards/@(lastTrick[i].ToString()).jpg" width=10%  /> 
-        } 
     </div>
 
     <div>
@@ -40,43 +32,10 @@
 @code {
     [Parameter]
     public bool showLastTrick { get; set; }
-    [Parameter]
-    public bool showTable { get; set; }
-    [Parameter]
-    public List<Card> lastTrick { get; set; }
-    [Parameter]
-    public List<Card> allPlayedCards { get; set; }
-
-
-    [Parameter]
-    public List<Card> cardsLeft { get; set; }
-    [Parameter]
-    public List<Card> cardsTop { get; set; }
-    [Parameter]
-    public List<Card> cardsRight { get; set; }
-    [Parameter]
-    public List<Card> cardsBottom { get; set; }
-    [Parameter]
-    public Dictionary<string,Card> cardsTable { get; set; }
-    [Parameter]
-    public bool activelyPlaying { get; set; }
-    [Parameter]
-    public List<string> playerStrings { get; set; }
-
-    public EventCallback<int> CardClicked { get; set; }
-    public EventCallback<int> CardClickedTable { get; set; }
     
-    async Task ClickCard(int idx)
-    {
-        if(activelyPlaying) {
-            await CardClicked.InvokeAsync(idx);
-        }
-    }
+    [Parameter]
+    public List<BlazorChatSample.Shared.Card> lastTrick { get; set; }
+    [Parameter]
+    public List<BlazorChatSample.Shared.Card> allPlayedCards { get; set; }
 
-    async Task ClickCardTable(int idx)
-    {
-        if(activelyPlaying){
-            await CardClickedTable.InvokeAsync(0);
-        }
-    }
 }
