@@ -1,12 +1,10 @@
 /* cards */
-
-.my-card {
+/* 
+.playing-card {
   width: 12%;
   box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
-  /*   margin-left: -50px; */
   transition: 0.3s ease-out;
   position: relative;
-  left: 5%;
 }
 
 .my-card:not(:first-child) {
@@ -27,28 +25,24 @@
 .their-card {
   width: 12%;
   box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
-  /*   margin-left: -50px; */
   transition: 0.3s ease-out;
   position: relative;
-  left: 5%;
 }
 
 .their-card:not(:first-child) {
   margin-left: -5%;
 }
 
-.rotate.their-card {
-  top: 12%;
+.rotated-card {
+  height: 12%;
   box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
-  /*   margin-left: -50px; */
   transition: 0.3s ease-out;
   position: relative;
-  left: 5%;
 }
 
-.rotate.their-card:not(:first-child) {
-  margin-left: -5%;
-}
+.rotated-card:not(:first-child) {
+  margin-top: -5%;
+} */
 
 /* cards */
 
