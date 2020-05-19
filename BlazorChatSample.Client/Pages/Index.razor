@@ -77,11 +77,15 @@
     <div class="content px-4">
         @if (!playing)
         {
-           // NotPlaying.razor
+            <_NotPlaying message="@message" Join=@Join/>
         }
-        else
+        else 
         {
-           // Playing.razor
+            <_Playing showLastTrick="@showLastTrick" showTable="@showTable" lastTrick="@lastTrick" allPlayedCards="@allPlayedCards"
+             cardsLeft="@cardsLeft" cardsRight="@cardsRight" cardsTop="@cardsTop" cardsBottom="@cardsBottom" 
+             cardsTable="@cardsTable" activelyPlaying="@activelyPlaying" playerStrings="@playerStrings"
+            
+            />
         }
     </div>
 </div>
@@ -96,8 +100,7 @@
     // name of the user who will be playing
     string username = null;
     // where does this person sit?
-    string seatnumber = null;
-
+    
     GameClient client = null;
 
     // on-screen message
@@ -114,7 +117,19 @@
     // current gameState of the client
     GameState gameState = null;
 
+    List<Card> lastTrick = new List<Card>();
+    List<Card> allPlayedCards = new List<Card>();
+
+    List<Card> cardsLeft = new List<Card>();
+    List<Card> cardsRight = new List<Card>();
+    List<Card> cardsTop = new List<Card>();
+    List<Card> cardsBottom = new List<Card>();
+    bool activelyPlaying = false;
+    Dictionary<string,Card> cardsTable = new Dictionary<string, Card>();
+    List<string> playerStrings = new List<string>();
+
     bool showLastTrick = false;
+    bool showTable = false;
 
     bool collapseNavMenu = true;
     
@@ -126,26 +141,12 @@
     /// <summary>
     /// Start chat client
     /// </summary>
-    async Task Join()
+    async Task Join(Player player)
+    //private void Join(EventArgs eargs)
     {
-        // check username is valid
-        if (string.IsNullOrWhiteSpace(username))
-        {
-            message = "Please enter a name";
-            return;
-        };
-        // check username is valid
-        if (string.IsNullOrWhiteSpace(seatnumber))
-        {
-            seatnumber = "10"; // sitting at end
-            @* message = "Please enter a seat number"; *@
-            @* return; *@
-        };
-        try{int.Parse(seatnumber);}
-        catch{
-            message = "Please enter a seat number";
-            return;
-        }
+        Console.WriteLine("joining");
+        Console.WriteLine(username);
+        this.username = player.name;
 
         try
         {
@@ -154,7 +155,7 @@
 
             // Create the chat client
             string baseUrl = navigationManager.BaseUri;
-            client = new GameClient(username, int.Parse(seatnumber), baseUrl);
+            client = new GameClient(username, player.seatnumber, baseUrl);
             // add an event handler for incoming messages
             client.MessageReceived += MessageReceived;
             client.GameUpdateReceived += UpdateGameState;
@@ -213,28 +214,21 @@
         playerlist = GetPlayerList();
         Console.WriteLine(playerlist);
         
+        lastTrick = GetLastTrick();
+        allPlayedCards = GetAllPlayedCards();
+        showTable = ShowTable();
+
+        cardsLeft = GetPlayerCards(GetPlayerLeft());
+        cardsRight = GetPlayerCards(GetPlayerRight());
+        cardsTop = GetPlayerCards(GetPlayerTop());
+        cardsBottom = GetPlayerCards(GetPlayerBottom());
+        activelyPlaying = true;
+        cardsTable = GetCardsTable();
+        playerStrings = GetPlayerStrings();
+
         StateHasChanged();
     }
 
-    async Task ClickCard(int idx)
-    {
-        if(gameState.ActivePlayers.Contains(username)) {
-            if(tradingPartner == null) {
-                await client.PlayCard(GetOwnCards()[idx]);
-            }
-            else {
-                await client.OfferCard(tradingPartner, GetOwnCards()[idx]);
-            }
-        }
-    }
-
-    async Task ClickCardTable()
-    {
-        if(gameState.ActivePlayers.Contains(username)) {
-            Console.WriteLine("card clicked");
-            await client.WithdrawCard();
-        }
-    }
     async Task Dealing(bool bWithNines)
     {
         await client.ReqDealing(bWithNines);
@@ -243,6 +237,24 @@
     {
         Console.WriteLine("Claiming");
         await client.Claiming();
+    }
+    
+    private async Task ClickCard(int idx)
+    {
+        if(tradingPartner == null) {
+            await client.PlayCard(GetOwnCards()[idx]);
+        }
+        else {
+            await client.OfferCard(tradingPartner, GetOwnCards()[idx]);
+        }
+    }
+
+    private async Task ClickCardTable()
+    {
+        if(gameState.ActivePlayers.Contains(username)) {
+            Console.WriteLine("card clicked");
+            await client.WithdrawCard();
+        }
     }
 
     public void LastTrick()
@@ -306,10 +318,8 @@
     }
     public List<Card> GetOwnCards()
     {
-        if(gameState == null || gameState.PlayerStates == null)
-            return new List<Card>();
-        if(gameState.PlayerStates.Keys.Contains(username))
-            return gameState.PlayerStates[username].Hand;
+        if(GetPlayerBottom() == username)
+            return GetPlayerCards(GetPlayerBottom());
         return new List<Card>();
     }
     public List<Card> GetPlayerCards(string playerName)
@@ -375,7 +385,7 @@
         List<string> startingString = new List<string>() {"","","",""};
         if(gameState == null || gameState.PlayerStates == null)
             return startingString;
-        if(gameState.StartingPlayer == username)
+        if(gameState.StartingPlayer == GetPlayerBottom())
             startingString[0] = "*";
         if(gameState.StartingPlayer == GetPlayerLeft())
             startingString[1] = "*";
@@ -384,6 +394,33 @@
         if(gameState.StartingPlayer == GetPlayerRight())
             startingString[3] = "*";
         return startingString;
+    }
+
+    private List<string> GetPlayerStrings() {
+        List<string> ps = new List<string>();
+        List<string> players = new List<string>();
+        players.Add(GetPlayerBottom());
+        players.Add(GetPlayerLeft());
+        players.Add(GetPlayerTop());
+        players.Add(GetPlayerRight());
+        if(gameState != null){
+            if(gameState.gamePhase == GameState.GamePhase.Done) {
+                for(int i=0;i<4;i++)
+                {
+                    ps.Add(players[i] + GetStarting()[i] + ": "+ GetPlayerPoints(players[i]));
+                }
+            }
+            else {
+                for(int i=0;i<4;i++)
+                {
+                    ps.Add(players[i] + GetStarting()[i] + ": "+ GetPlayerTricks(players[i]));
+                }
+            }        
+        }
+        else{
+            ps.Add("");ps.Add("");ps.Add("");ps.Add("");
+        }
+        return ps;
     }
 
     public string GetPlayerList()

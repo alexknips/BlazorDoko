@@ -1,0 +1,54 @@
+﻿@using BlazorChatSample.Shared 
+
+<p>
+    Enter your name and seat number to start playing:
+</p>
+
+<input type="text" maxlength="32" placeholder="playername" @bind="@username" />
+<input type="text" maxlength="32" placeholder="1" @bind="@seatnumber" />
+<button type="button" @onclick="@Joining"><span class="oi oi-chat" aria-hidden="true"></span> Join!</button>
+
+@if (message != null)
+{
+    <div class="invalid-feedback">@message</div>
+    <small id="emailHelp" class="form-text text-muted">@message</small>
+}  
+
+@code {
+    [Parameter]
+    public string message { get; set; }
+    [Parameter]
+    public string username { get; set; }
+    [Parameter]
+    public string seatnumber { get; set; }
+    [Parameter]
+    public EventCallback<Player> Join { get; set; }
+
+    private async Task Joining()
+    {
+        // check username is valid
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            message = "Please enter a name";
+            return;
+        };
+        // check username is valid
+        if (string.IsNullOrWhiteSpace(seatnumber))
+        {
+            seatnumber = "10"; // sitting at end
+            @* message = "Please enter a seat number"; *@
+            @* return; *@
+        };
+        try{int.Parse(seatnumber);}
+        catch{
+            message = "Please enter a seat number";
+            return;
+        }
+
+        Player p = new Player();
+        p.name = username;
+        p.seatnumber = int.Parse(seatnumber);
+
+        await Join.InvokeAsync(p);
+    }
+}
