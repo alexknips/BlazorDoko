@@ -104,6 +104,14 @@ namespace BlazorChatSample.Server.Hubs
                     Messages.RECEIVE,
                     username, $"{username} joined the chat");
             }
+
+            // if someone connects, it might have been a reconnect. 
+            // just resend the gamestate to everyone
+            if(gameState == null)
+            { // if the game didn't start yet, just initialize it
+                gameState = new GameState();
+            }
+            await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
         }
 
         /// <summary>
