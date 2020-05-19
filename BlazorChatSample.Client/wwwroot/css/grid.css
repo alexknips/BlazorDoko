@@ -39,6 +39,10 @@
   grid-column: 1 / 4;
 }
 
+.buttonrow > a {
+  margin: 0.5rem;
+}
+
 .grid > * {
   display: flex;
   align-items: center;
