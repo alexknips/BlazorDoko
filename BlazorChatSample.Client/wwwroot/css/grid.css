@@ -28,15 +28,7 @@
 }
 
 .right {
-  display: grid;
-  grid-template-columns: 100vw;
-  grid-template-rows: repeat(12, 8vh);
-}
-
-.right > img {
-  height: 50%;
-  width: 50%;
-  object-fit: cover;
+  align-self: stretch;
 }
 
 .grid > * {

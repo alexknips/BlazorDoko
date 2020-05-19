@@ -1,14 +1,29 @@
-/* cards */
-/* 
 .playing-card {
-  width: 12%;
+  width: 50px;
   box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
   transition: 0.3s ease-out;
   position: relative;
 }
 
-.my-card:not(:first-child) {
-  margin-left: -5%;
+.playing-card:not(:first-child) {
+  margin-left: -10px;
+}
+
+.rot-playing-card {
+  width: 50px;
+  box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
+  transition: 0.3s ease-out;
+  position: relative;
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+}
+
+.rot-playing-card:not(:first-child) {
+  margin-left: 0;
+  margin-top: -10px;
 }
 
 .my-card:hover {
@@ -16,40 +31,8 @@
   transition: 0.3s ease-out;
 }
 
-.my-card:hover ~ .playing-card {
+.my-card:hover ~ .my-card {
   position: relative;
   left: 5%;
   transition: 0.3s ease-out;
-}
-
-.their-card {
-  width: 12%;
-  box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
-  transition: 0.3s ease-out;
-  position: relative;
-}
-
-.their-card:not(:first-child) {
-  margin-left: -5%;
-}
-
-.rotated-card {
-  height: 12%;
-  box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
-  transition: 0.3s ease-out;
-  position: relative;
-}
-
-.rotated-card:not(:first-child) {
-  margin-top: -5%;
-} */
-
-/* cards */
-
-.rotate {
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  transform: rotate(90deg);
 }
