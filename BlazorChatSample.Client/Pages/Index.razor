@@ -1,8 +1,13 @@
 ﻿@using BlazorChatSample.Shared 
 @page "/"
 @inject NavigationManager navigationManager
-
-<div class="sidebar">
+                    <NavLink class="nav-link"  @onclick="@(e => Dealing(true))">
+                        Deal w/ Nines
+                    </NavLink>
+                    <NavLink class="nav-link"  @onclick="@(e => Dealing(false))">
+                        Deal w/o Nines
+                    </NavLink>
+@* <div class="sidebar">
     <div class="top-row pl-4 navbar navbar-dark">
         <a class="navbar-brand" href="">Doppelkopf</a>
         <button class="navbar-toggler" @onclick="@ToggleNavMenu">
@@ -19,31 +24,10 @@
                     <NavLink class="nav-link"  @onclick="@(e => Dealing(false))">
                         Deal w/o Nines
                     </NavLink>
-                    @if(GetPlayerBottom() == username){ // this player participates
+                    @if(activelyPlaying){ // this player participates
                         <NavLink class="nav-link" @onclick="@Claiming">
                             Claim
                         </NavLink>
-                        @if(!roundStarted) {
-                            @if(gameState != null) {
-                                @if(tradingPartner == null) {
-                                    <NavLink class="nav-link" @onclick="@(e => Trading(GetPlayerLeft()))">
-                                        Trade Cards with @GetPlayerLeft()
-                                    </NavLink>
-                                    <NavLink class="nav-link" @onclick="@(e => Trading(GetPlayerTop()))">
-                                        Trade Cards with @GetPlayerTop()
-                                    </NavLink>
-                                    <NavLink class="nav-link" @onclick="@(e => Trading(GetPlayerRight()))">
-                                        Trade Cards with @GetPlayerRight()
-                                    </NavLink>
-                                }
-                                else
-                                {
-                                    <NavLink class="nav-link" @onclick="@(e => Trading(""))">
-                                        Stop trading
-                                    </NavLink>
-                                }
-                            }
-                        }
                         @if(showLastTrick){
                             <NavLink class="nav-link" @onclick="@LastTrick">
                                 Hide last trick
@@ -60,7 +44,7 @@
 
         </ul>
     </div>
-</div>
+</div> *@
 
 <div class="main">
     <div class="top-row px-4">
@@ -84,7 +68,8 @@
             @if(showTable) {
                 <_Table cardsLeft="@cardsLeft" cardsRight="@cardsRight" cardsTop="@cardsTop" 
                 cardsBottom="@cardsBottom" cardsTable="@cardsTable" activelyPlaying="@activelyPlaying" 
-                playerStrings="@playerStrings" playerNames="@playerNames" CardClicked=@ClickCard CardClickedTable=@ClickCardTable/>
+                playerStrings="@playerStrings" playerNames="@playerNames" CardClicked=@ClickCard CardClickedTable=@ClickCardTable
+                tradingPartner="@tradingPartner" TradingEvent=@Trading />
             }
 
             <_Playing showLastTrick="@showLastTrick" lastTrick="@lastTrick" allPlayedCards="@allPlayedCards" />
@@ -225,7 +210,7 @@
         cardsRight = GetPlayerCards(GetPlayerRight());
         cardsTop = GetPlayerCards(GetPlayerTop());
         cardsBottom = GetPlayerCards(GetPlayerBottom());
-        activelyPlaying = true;
+        activelyPlaying = (GetPlayerBottom() == username);
         cardsTable = GetCardsTable();
         playerStrings = GetPlayerStrings();
         playerNames = GetPlayerNames();
@@ -269,7 +254,7 @@
         StateHasChanged();
     }
 
-    void Trading(string receiver)
+    private async Task Trading(string receiver)
     {
         if(receiver.Length > 0) {
             tradingPartner = receiver;

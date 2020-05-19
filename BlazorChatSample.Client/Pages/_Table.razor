@@ -1,6 +1,70 @@
-﻿ @* <div class="grid-container"> *@
-  <div class="itemLeft">
-        @* <div class="rotate"> *@
+﻿<div class="grid">
+      <div class="buttonrow">
+        <a class="waves-effect waves-light btn-large">Deal w/ Nines</a>
+        <a class="waves-effect waves-light btn-large">Deal w/o Nines</a>
+      </div>
+
+      <div class="top">
+        @for (var i = 0;i<cardsTop.Count;i++)
+        { 
+            var cardIdx = i;
+            <img class="playing-card" src="cards/green_back.jpg" />
+        }
+      </div>
+      <div class="left">
+        @for (var i = 0;i<cardsLeft.Count;i++)
+        { 
+            var cardIdx = i;
+            <img class="rot-playing-card" src="cards/green_back.jpg" />
+        }
+      </div>
+
+      <div class="middle">
+        Middle
+      </div>
+      <div class="right">
+        @for (var i = 0;i<cardsRight.Count;i++)
+        { 
+            var cardIdx = i;
+            <img class="rot-playing-card" src="cards/green_back.jpg" />
+        }
+      </div>
+      <div class="bottom">
+        @for (var i = 0;i<cardsBottom.Count;i++)
+        { 
+            var cardIdx = i;
+            @if(activelyPlaying){
+                <img class="my-card" src="cards/@(cardsBottom[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
+            }
+            else
+            {
+                <img class="my-card" src="cards/green_back.jpg" />
+            }
+        }
+      </div>
+      <div class="buttonrow">
+        <a class="waves-effect waves-light btn-large">Claim</a>
+        <a class="waves-effect waves-light btn-large">Show last trick</a>
+        @if(tradingPartner == null) {
+            @for (var i = 0;i<3;i++)
+            { 
+                var pId = i;
+                <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(playerNames[pId]))">
+                    Trade Cards with @playerNames[pId]
+                </a>
+            }
+        }
+        else
+        {
+            <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(""))">
+                Stop trading
+            </a>
+        }
+      </div>
+</div> 
+ 
+ 
+  @* <div class="itemLeft">
         <div class="cardcontainerleft">
         <div class="containersmall">
         @playerStrings[1]
@@ -11,11 +75,9 @@
         }
         </div>
         </div>
-    @* </div> *@
   </div>
   <div class="itemRight">
         <div class="cardcontainerright">
-    @* <div class="rotate"> *@
         <div class="containersmall">
         @playerStrings[3]
         @for (var i = 0;i<cardsRight.Count;i++)
@@ -24,7 +86,6 @@
             <img class="card" src="cards/green_back.jpg" />
         }
         </div>
-        @* </div> *@
     </div>
   </div>
   <div class="itemTop">
@@ -57,8 +118,7 @@
             }
     </div>
 
-  </div>
-@* </div>  *@
+  </div> *@
 
 <div class="cardTable">
 <div class="cardTop">
@@ -223,6 +283,9 @@
     public bool activelyPlaying { get; set; }
 
     [Parameter]
+    public string tradingPartner { get; set; }
+
+    [Parameter]
     public List<string> playerStrings { get; set; }
     [Parameter]
     public List<string> playerNames { get; set; }
@@ -231,6 +294,9 @@
     public EventCallback<int> CardClicked { get; set; }
     [Parameter]
     public EventCallback<int> CardClickedTable { get; set; }
+
+    [Parameter]
+    public EventCallback<string> TradingEvent { get; set; }
     
     private async Task ClickCard(int idx)
     {
@@ -245,6 +311,13 @@
     {
         if(activelyPlaying){
             await CardClickedTable.InvokeAsync(0);
+        }
+    }
+
+    private async Task Trading(string partner)
+    {
+        if(activelyPlaying){
+            await TradingEvent.InvokeAsync(partner);
         }
     }
 }
