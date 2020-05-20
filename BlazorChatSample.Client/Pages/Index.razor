@@ -1,81 +1,42 @@
 ﻿@using BlazorChatSample.Shared 
 @page "/"
 @inject NavigationManager navigationManager
-                    <NavLink class="nav-link"  @onclick="@(e => Dealing(true))">
-                        Deal w/ Nines
-                    </NavLink>
-                    <NavLink class="nav-link"  @onclick="@(e => Dealing(false))">
-                        Deal w/o Nines
-                    </NavLink>
-@* <div class="sidebar">
-    <div class="top-row pl-4 navbar navbar-dark">
-        <a class="navbar-brand" href="">Doppelkopf</a>
-        <button class="navbar-toggler" @onclick="@ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-    <div class=@(collapseNavMenu ? "collapse" : null) @onclick="@ToggleNavMenu">
-        <ul class="nav flex-column">
-            <li class="nav-item px-3">
-                @if(playing){
-                    <NavLink class="nav-link"  @onclick="@(e => Dealing(true))">
-                        Deal w/ Nines
-                    </NavLink>
-                    <NavLink class="nav-link"  @onclick="@(e => Dealing(false))">
-                        Deal w/o Nines
-                    </NavLink>
-                    @if(activelyPlaying){ // this player participates
-                        <NavLink class="nav-link" @onclick="@Claiming">
-                            Claim
-                        </NavLink>
-                        @if(showLastTrick){
-                            <NavLink class="nav-link" @onclick="@LastTrick">
-                                Hide last trick
-                            </NavLink>
-                        }
-                        else {
-                            <NavLink class="nav-link" @onclick="@LastTrick">
-                                Show last trick
-                            </NavLink>
-                        }
-                    }
-                }
-            </li>
+           
 
-        </ul>
+@* needs to be outside of the grid *@
+@if (!playing)
+{
+    <_NotPlaying message="@message" Join=@Join/>
+} 
+else
+{
+<div class="grid">
+    <div class="toprow">
+    @if (playing)
+    {
+        <p>You are connected as <b>@username</b></p>
+        <a class="waves-effect waves-light btn-large" @onclick="@DisconnectAsync">Disconnect</a>
+    }
+    @if(playing) {
+    <a class="waves-effect waves-light btn-large" @onclick="@(e => Dealing(true))">Deal w/ Nines</a>
+    <a class="waves-effect waves-light btn-large" @onclick="@(e => Dealing(false))">Deal w/o Nines</a>
+    }
     </div>
-</div> *@
-
-<div class="main">
-    <div class="top-row px-4">
-        @if (playing)
-        {
-            <p>You are connected as <b>@username</b></p>
-            @* @if(playerlist != null){
-                <br /><p>On the server: @playerlist</p>
-            } *@
-            <button class="btn btn-sm btn-warning ml-md-auto" @onclick="@DisconnectAsync">Disconnect</button>
+    @if (playing) 
+    {
+        @if(showTable) {
+            <_Table cardsLeft="@cardsLeft" cardsRight="@cardsRight" cardsTop="@cardsTop" 
+            cardsBottom="@cardsBottom" cardsTable="@cardsTable" activelyPlaying="@activelyPlaying" 
+            playerStrings="@playerStrings" playerNames="@playerNames" CardClicked=@ClickCard CardClickedTable=@ClickCardTable
+            tradingPartner="@tradingPartner" TradingEvent=@Trading />
         }
-    </div>
-
-    <div class="content px-4">
-        @if (!playing)
-        {
-            <_NotPlaying message="@message" Join=@Join/>
-        }
-        else 
-        {
-            @if(showTable) {
-                <_Table cardsLeft="@cardsLeft" cardsRight="@cardsRight" cardsTop="@cardsTop" 
-                cardsBottom="@cardsBottom" cardsTable="@cardsTable" activelyPlaying="@activelyPlaying" 
-                playerStrings="@playerStrings" playerNames="@playerNames" CardClicked=@ClickCard CardClickedTable=@ClickCardTable
-                tradingPartner="@tradingPartner" TradingEvent=@Trading />
-            }
-
-            <_Playing showLastTrick="@showLastTrick" lastTrick="@lastTrick" allPlayedCards="@allPlayedCards" />
-        }
-    </div>
+        <_Playing showLastTrick="@showLastTrick" lastTrick="@lastTrick" allPlayedCards="@allPlayedCards" />
+    }
 </div>
+}
+
+
+    
 @code  {
     // flag to indicate chat status
     bool playing = false;

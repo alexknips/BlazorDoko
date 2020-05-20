@@ -9,7 +9,7 @@
 }
 
 .rot-playing-card {
-  height: 8%;
+  height: 12%;
   max-width: 100%;
   box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
   -webkit-transform: rotate(-90deg);
@@ -20,7 +20,7 @@
 }
 
 .rot-playing-card:not(:first-child) {
-  margin-top: 0;
+  margin-top: -8%;
 }
 
 .my-card {

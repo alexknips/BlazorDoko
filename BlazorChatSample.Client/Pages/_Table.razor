@@ -1,68 +1,63 @@
-﻿<div class="grid">
-      <div class="buttonrow">
-        <a class="waves-effect waves-light btn-large">Deal w/ Nines</a>
-        <a class="waves-effect waves-light btn-large">Deal w/o Nines</a>
-      </div>
+﻿
 
-      <div class="top">
-        @for (var i = 0;i<cardsTop.Count;i++)
-        { 
-            var cardIdx = i;
-            <img class="playing-card" src="cards/green_back.jpg" />
-        }
-      </div>
-      <div class="left">
-        @for (var i = 0;i<cardsLeft.Count;i++)
-        { 
-            var cardIdx = i;
-            <img class="rot-playing-card" src="cards/green_back.jpg" />
-        }
-      </div>
+<div class="top">
+@for (var i = 0;i<cardsTop.Count;i++)
+{ 
+    var cardIdx = i;
+    <img class="playing-card" src="cards/green_back.jpg" />
+}
+</div>
+<div class="left">
+@for (var i = 0;i<cardsLeft.Count;i++)
+{ 
+    var cardIdx = i;
+    <img class="rot-playing-card" src="cards/green_back.jpg" />
+}
+</div>
 
-      <div class="middle">
-        Middle
-      </div>
-      <div class="right">
-        @for (var i = 0;i<cardsRight.Count;i++)
-        { 
-            var cardIdx = i;
-            <img class="rot-playing-card" src="cards/green_back.jpg" />
-        }
-      </div>
-      <div class="bottom">
-        @for (var i = 0;i<cardsBottom.Count;i++)
-        { 
-            var cardIdx = i;
-            @if(activelyPlaying){
-                <img class="my-card" src="cards/@(cardsBottom[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
-            }
-            else
-            {
-                <img class="my-card" src="cards/green_back.jpg" />
-            }
-        }
-      </div>
-      <div class="buttonrow">
-        <a class="waves-effect waves-light btn-large">Claim</a>
-        <a class="waves-effect waves-light btn-large">Show last trick</a>
-        @if(tradingPartner == null) {
-            @for (var i = 0;i<3;i++)
-            { 
-                var pId = i;
-                <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(playerNames[pId]))">
-                    Trade Cards with @playerNames[pId]
-                </a>
-            }
-        }
-        else
-        {
-            <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(""))">
-                Stop trading
-            </a>
-        }
-      </div>
-</div> 
- 
+<div class="middle">
+Middle
+</div>
+<div class="right">
+@for (var i = 0;i<cardsRight.Count;i++)
+{ 
+    var cardIdx = i;
+    <img class="rot-playing-card" src="cards/green_back.jpg" />
+}
+</div>
+<div class="bottom">
+@for (var i = 0;i<cardsBottom.Count;i++)
+{ 
+    var cardIdx = i;
+    @if(activelyPlaying){
+        <img class="my-card" src="cards/@(cardsBottom[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
+    }
+    else
+    {
+        <img class="my-card" src="cards/green_back.jpg" />
+    }
+}
+</div>
+<div class="bottomrow">
+<a class="waves-effect waves-light btn-large">Claim</a>
+<a class="waves-effect waves-light btn-large">Show last trick</a>
+@if(tradingPartner == null) {
+    @for (var i = 0;i<3;i++)
+    { 
+        var pId = i;
+        <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(playerNames[pId]))">
+            Trade Cards with @playerNames[pId]
+        </a>
+    }
+}
+else
+{
+    <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(""))">
+        Stop trading
+    </a>
+}
+</div>
+
  
   @* <div class="itemLeft">
         <div class="cardcontainerleft">
@@ -140,7 +135,8 @@
 @if(cardsTable.Keys.Contains(playerNames[0])){
     <input type="image" src="cards/@(cardsTable[playerNames[0]].ToString()).jpg"  @onclick="@(e => ClickCardTable())"/>
 }
-</div></div>
+</div>
+</div>
 
 
 
@@ -269,6 +265,7 @@
 
 
 @code {
+
     [Parameter]
     public List<BlazorChatSample.Shared.Card> cardsLeft { get; set; }
     [Parameter]
@@ -278,7 +275,7 @@
     [Parameter]
     public List<BlazorChatSample.Shared.Card> cardsBottom { get; set; }
     [Parameter]
-    public Dictionary<string,BlazorChatSample.Shared.Card> cardsTable { get; set; }
+    public Dictionary<string, BlazorChatSample.Shared.Card> cardsTable { get; set; }
     [Parameter]
     public bool activelyPlaying { get; set; }
 
@@ -297,11 +294,12 @@
 
     [Parameter]
     public EventCallback<string> TradingEvent { get; set; }
-    
+
     private async Task ClickCard(int idx)
     {
-        if(activelyPlaying) {
-            Console.WriteLine("clicked card " + idx.ToString() );
+        if (activelyPlaying)
+        {
+            Console.WriteLine("clicked card " + idx.ToString());
             Console.WriteLine(CardClicked.HasDelegate);
             await CardClicked.InvokeAsync(idx);
         }
@@ -309,7 +307,8 @@
 
     private async Task ClickCardTable()
     {
-        if(activelyPlaying){
+        if (activelyPlaying)
+        {
             await CardClickedTable.InvokeAsync(0);
         }
     }

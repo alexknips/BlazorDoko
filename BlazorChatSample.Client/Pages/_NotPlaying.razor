@@ -1,16 +1,35 @@
-﻿<p>
-    Enter your name and seat number to start playing:
-</p>
+﻿
 
-<input type="text" maxlength="32" placeholder="playername" @bind="@username" />
-<input type="text" maxlength="32" placeholder="1" @bind="@seatnumber" />
-<button type="button" @onclick="@Joining"><span class="oi oi-chat" aria-hidden="true"></span> Join!</button>
-
-@if (message != null)
-{
-    <div class="invalid-feedback">@message</div>
-    <small id="emailHelp" class="form-text text-muted">@message</small>
-}  
+@* not within the grid *@
+<div class="container">
+    <div class="row">
+        <div class="input-field col s12">
+        <h4>
+            Enter your name and seat number to start playing
+        </h4>
+         </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s6">
+            <input id="player_name" type="text" class="validate" maxlength="15" @bind="@username" >
+            <label for="player_name">Player name</label>
+        </div>
+        <div class="input-field col s4">
+            <input id="seat_number" type="text" class="validate" maxlength="1"  @bind="@seatnumber" >
+            <label for="seat_number">Seat number</label>
+        </div>
+        <div class="input-field col s2">
+            <a class="waves-effect waves-light btn"  @onclick="@Joining">Join!</a>
+        </div>
+    </div>
+    @if (message != null)
+    {
+    <div class="row">
+        <div class="invalid-feedback">@message</div>
+        <small id="emailHelp" class="form-text text-muted">@message</small>
+    </div>
+    }  
+</div>
 
 @code {
     [Parameter]
