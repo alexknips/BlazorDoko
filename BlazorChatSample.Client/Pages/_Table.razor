@@ -42,7 +42,7 @@ Middle
 <a class="waves-effect waves-light btn-large">Claim</a>
 <a class="waves-effect waves-light btn-large">Show last trick</a>
 @if(tradingPartner == null) {
-    @for (var i = 0;i<3;i++)
+    @for (var i = 1;i<4;i++)
     { 
         var pId = i;
         <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(playerNames[pId]))">
