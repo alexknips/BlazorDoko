@@ -1,31 +1,36 @@
 .playing-card {
-  width: 6%;
+  max-height: 50%;
+  max-width: 12%;
   box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
-  position: relative;
 }
 
 .playing-card:not(:first-child) {
-  margin-left: -2%;
+  margin-left: -4%;
 }
 
-.rot-playing-card {
+.rot-playing-card-left {
   height: 12%;
   max-width: 100%;
   box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
-  -webkit-transform: rotate(-90deg);
-  -moz-transform: rotate(-90deg);
-  -o-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  transform: rotate(-90deg);
 }
 
-.rot-playing-card:not(:first-child) {
-  margin-top: -8%;
+.rot-playing-card-left:not(:first-child) {
+  margin-top: -5%;
+}
+
+.rot-playing-card-right {
+  height: 12%;
+  max-width: 100%;
+  box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
+}
+
+.rot-playing-card-right:not(:last-child) {
+  margin-top: -5%;
 }
 
 .my-card {
   max-height: 100%;
-  width: 12%;
+  max-width: 12%;
   box-shadow: -0.5rem 0.5rem 0.8rem rgb(50, 50, 50);
   transition: 0.3s ease-out;
   position: relative;

@@ -6,9 +6,15 @@
 
 .right,
 .left {
-  grid-row: 2 / 5;
-  flex-direction: column-reverse;
+  grid-row: 3 / 4;
   max-height: 100%;
+}
+
+.right {
+  flex-direction: column-reverse;
+}
+.left {
+  flex-direction: column;
 }
 
 .toprow {
@@ -27,12 +33,12 @@
   grid-column: 3 / 4;
 }
 
-.bottom {
+.top {
+  grid-column: 2 / 3;
 }
 
-.top,
 .bottom {
-  grid-column: 2 / 3;
+  grid-column: 1 / 4;
 }
 
 .left {

@@ -11,7 +11,7 @@
 @for (var i = 0;i<cardsLeft.Count;i++)
 { 
     var cardIdx = i;
-    <img class="rot-playing-card" src="cards/green_back.jpg" />
+    <img class="rot-playing-card-left" src="cards/green_back_rot.jpg" />
 }
 </div>
 
@@ -22,7 +22,7 @@ Middle
 @for (var i = 0;i<cardsRight.Count;i++)
 { 
     var cardIdx = i;
-    <img class="rot-playing-card" src="cards/green_back.jpg" />
+    <img class="rot-playing-card-right" src="cards/green_back_rot.jpg" />
 }
 </div>
 <div class="bottom">
@@ -265,7 +265,6 @@ else
 
 
 @code {
-
     [Parameter]
     public List<BlazorChatSample.Shared.Card> cardsLeft { get; set; }
     [Parameter]
@@ -315,7 +314,8 @@ else
 
     private async Task Trading(string partner)
     {
-        if(activelyPlaying){
+        if (activelyPlaying)
+        {
             await TradingEvent.InvokeAsync(partner);
         }
     }
