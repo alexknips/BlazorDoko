@@ -60,8 +60,8 @@
 }
 </div>
 <div class="bottomrow">
-<a class="waves-effect waves-light btn-large">Claim</a>
-<a class="waves-effect waves-light btn-large">Show last trick</a>
+<a class="waves-effect waves-light btn-large"  @onclick="@(e => Claiming())">Claim</a>
+<a class="waves-effect waves-light btn-large" @onclick="@(e => ShowLastTrick())">Show last trick</a>
 @if(tradingPartner == null) {
     @for (var i = 1;i<4;i++)
     { 
@@ -289,6 +289,14 @@ else
     [Parameter]
     public EventCallback<string> TradingEvent { get; set; }
 
+
+    [Parameter]
+    public EventCallback<int> ClaimingEvent { get; set; }
+
+
+    [Parameter]
+    public EventCallback<int> ShowLastTrickEvent { get; set; }
+
     private async Task ClickCard(int idx)
     {
         if (activelyPlaying)
@@ -312,6 +320,20 @@ else
         if (activelyPlaying)
         {
             await TradingEvent.InvokeAsync(partner);
+        }
+    }
+    private async Task Claiming()
+    {
+        if (activelyPlaying)
+        {
+            await ClaimingEvent.InvokeAsync(0);
+        }
+    }
+    private async Task ShowLastTrick()
+    {
+        if (activelyPlaying)
+        {
+            await ShowLastTrickEvent.InvokeAsync(0);
         }
     }
 }
