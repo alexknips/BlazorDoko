@@ -45,9 +45,9 @@
 }
 
 .cardTable {
-  position: absolute;
-  left: 40%;
-  top: 38%;
+  position: relative;
+  left: -50px;
+  top: -20px;
   display: flex;
 }
 .cardTop {
