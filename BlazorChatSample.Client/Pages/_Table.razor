@@ -16,7 +16,28 @@
 </div>
 
 <div class="middle">
-Middle
+    <div class="cardTable">
+        <div class="cardTop">
+        @if(cardsTable.Keys.Contains(playerNames[2])){
+            <img src="cards/@(cardsTable[playerNames[2]].ToString()).jpg"  />
+        }
+        </div>
+        <div class="cardLeft">
+        @if(cardsTable.Keys.Contains(playerNames[1])){
+            <img src="cards/@(cardsTable[playerNames[1]].ToString()).jpg"  />
+        }
+        </div>
+        <div class="cardRight">
+        @if(cardsTable.Keys.Contains(playerNames[3])){
+            <img src="cards/@(cardsTable[playerNames[3]].ToString()).jpg"  />
+        }
+        </div>
+        <div class="cardBottom">
+        @if(cardsTable.Keys.Contains(playerNames[0])){
+            <input type="image" src="cards/@(cardsTable[playerNames[0]].ToString()).jpg"  @onclick="@(e => ClickCardTable())"/>
+        }
+        </div>
+    </div>
 </div>
 <div class="right">
 @for (var i = 0;i<cardsRight.Count;i++)
@@ -114,32 +135,6 @@ else
     </div>
 
   </div> *@
-
-<div class="cardTable">
-<div class="cardTop">
-@if(cardsTable.Keys.Contains(playerNames[2])){
-    <img src="cards/@(cardsTable[playerNames[2]].ToString()).jpg"  />
-}
-</div>
-<div class="cardLeft">
-@if(cardsTable.Keys.Contains(playerNames[1])){
-    <img src="cards/@(cardsTable[playerNames[1]].ToString()).jpg"  />
-}
-</div>
-<div class="cardRight">
-@if(cardsTable.Keys.Contains(playerNames[3])){
-    <img src="cards/@(cardsTable[playerNames[3]].ToString()).jpg"  />
-}
-</div>
-<div class="cardBottom">
-@if(cardsTable.Keys.Contains(playerNames[0])){
-    <input type="image" src="cards/@(cardsTable[playerNames[0]].ToString()).jpg"  @onclick="@(e => ClickCardTable())"/>
-}
-</div>
-</div>
-
-
-
 
 @* <div class="container">
     <div class="row">
