@@ -119,6 +119,9 @@ namespace BlazorChatSample.Shared
         /// </summary>
         public void TrickClaimed(string claimingPlayer)
         {
+            if(CurrentTrick.Count < 4)
+                return;
+
             LastTrick = new Dictionary<string, Card>(CurrentTrick);
 
             int valueOfTrick = 0;
