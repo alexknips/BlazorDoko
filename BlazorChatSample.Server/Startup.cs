@@ -26,7 +26,7 @@ namespace BlazorChatSample.Server
                 .AllowAnyHeader()
                 .AllowCredentials();
             }));
-            
+
             // I think this was pre-Core3.x
             //services.AddMvc();
             services.AddSignalR();
@@ -42,8 +42,6 @@ namespace BlazorChatSample.Server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors("AllowCors");
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -54,6 +52,8 @@ namespace BlazorChatSample.Server
             app.UseBlazorFrameworkFiles();  // preview2 change
 
             app.UseRouting();
+            
+            app.UseCors("AllowCors");
 
             app.UseEndpoints(endpoints =>
             {
