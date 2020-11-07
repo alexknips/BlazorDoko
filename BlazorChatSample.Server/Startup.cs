@@ -24,7 +24,8 @@ namespace BlazorChatSample.Server
 
             services.AddCors( o => o.AddPolicy("MyPolicy", builder =>
             {
-                builder.AllowAnyOrigin()
+                builder
+                .SetIsOriginAllowed(_ => true)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
@@ -41,7 +42,7 @@ namespace BlazorChatSample.Server
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCors("MyPolicy");
-            
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
