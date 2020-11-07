@@ -18,11 +18,7 @@ namespace BlazorChatSample.Server
         {
             services.AddControllersWithViews(); 
 
-            // I think this was pre-Core3.x
-            //services.AddMvc();
-            services.AddSignalR();
-
-            services.AddCors( o => o.AddPolicy("MyPolicy", builder =>
+            services.AddCors( o => o.AddPolicy("AllowCors", builder =>
             {
                 builder
                 .SetIsOriginAllowed(_ => true)
@@ -30,6 +26,11 @@ namespace BlazorChatSample.Server
                 .AllowAnyHeader()
                 .AllowCredentials();
             }));
+            
+            // I think this was pre-Core3.x
+            //services.AddMvc();
+            services.AddSignalR();
+
             // not sure this is required any more
             //services.AddResponseCompression(opts =>
             //{
@@ -41,7 +42,7 @@ namespace BlazorChatSample.Server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors("MyPolicy");
+            app.UseCors("AllowCors");
 
             if (env.IsDevelopment())
             {
@@ -62,6 +63,7 @@ namespace BlazorChatSample.Server
 
                 endpoints.MapFallbackToFile("index.html");  // preview2 change
             });
+
         }
 
     }
