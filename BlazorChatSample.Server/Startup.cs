@@ -22,6 +22,13 @@ namespace BlazorChatSample.Server
             //services.AddMvc();
             services.AddSignalR();
 
+            services.AddCors( o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+            }));
             // not sure this is required any more
             //services.AddResponseCompression(opts =>
             //{
@@ -33,6 +40,8 @@ namespace BlazorChatSample.Server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("MyPolicy");
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
