@@ -356,21 +356,13 @@ else
         if(gameState == null || gameState.PlayerStates == null)
             return startingString;
         if(gameState.StartingPlayer == GetPlayerBottom())
-            startingString[0] = "(sitzt vorne)";
+            startingString[0] = " (sitzt vorne)";
         if(gameState.StartingPlayer == GetPlayerLeft())
-            startingString[1] = "(sitzt vorne)";
+            startingString[1] = " (sitzt vorne)";
         if(gameState.StartingPlayer == GetPlayerTop())
-            startingString[2] = "(sitzt vorne)";
+            startingString[2] = " (sitzt vorne)";
         if(gameState.StartingPlayer == GetPlayerRight())
-            startingString[3] = "(sitzt vorne)";
-        @* if(gameState.StartingPlayer == GetPlayerBottom())
-            startingString[0] = "*";
-        if(gameState.StartingPlayer == GetPlayerLeft())
-            startingString[1] = "*";
-        if(gameState.StartingPlayer == GetPlayerTop())
-            startingString[2] = "*";
-        if(gameState.StartingPlayer == GetPlayerRight())
-            startingString[3] = "*";             *@
+            startingString[3] = " (sitzt vorne)";
         return startingString;
     }
 
