@@ -105,6 +105,13 @@ namespace BlazorChatSample.Server.Hubs
                     username, $"{username} joined the chat");
             }
 
+            string allUsers = "";
+            foreach(Player p in userLookup.Values)
+            {
+                allUsers += p.name + " (" + p.seatnumber + "), ";
+            }
+            await Clients.All.SendAsync(Messages.RECEIVE,"allplayers",allUsers);
+
             // if someone connects, it might have been a reconnect. 
             // just resend the gamestate to everyone
             if(gameState == null)
@@ -144,6 +151,13 @@ namespace BlazorChatSample.Server.Hubs
                 Messages.RECEIVE,
                 player.name, $"{player.name} has left the chat");
             await base.OnDisconnectedAsync(e);
+            
+            string allUsers = "";
+            foreach(Player p in userLookup.Values)
+            {
+                allUsers += p.name + " (" + p.seatnumber + "), ";
+            }
+            await Clients.All.SendAsync(Messages.RECEIVE,"allplayers",allUsers);
         }
 
 

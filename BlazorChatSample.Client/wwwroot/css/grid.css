@@ -27,22 +27,27 @@
 
 .top {
   grid-row: 2 / 3;
+  position:relative;
 }
 
 .right {
   grid-column: 3 / 4;
+  position:relative;
 }
 
 .top {
   grid-column: 2 / 3;
+  position:relative;
 }
 
 .bottom {
   grid-column: 1 / 4;
+  position:relative;
 }
 
 .left {
   grid-column: 1 / 2;
+  position:relative;
 }
 
 .middle {
@@ -62,4 +67,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+
+.playerstringstyle {
+  font-weight: bold;
+  font-size: 1.2em;
 }

@@ -1,7 +1,6 @@
 ﻿@using BlazorChatSample.Shared 
 @page "/"
 @inject NavigationManager navigationManager
-           
 
 @* needs to be outside of the grid *@
 @if (!playing)
@@ -14,13 +13,16 @@ else
     <div class="toprow">
     @if (playing)
     {
-        <p>You are connected as <b>@username</b></p>
-        <a class="waves-effect waves-light btn-large" @onclick="@DisconnectAsync">Disconnect</a>
+        <p>Verbunden als <b>@username</b></p>
+        @* <p>You are connected as <b>@username</b></p> *@
+        @* <a class="waves-effect waves-light btn-large" @onclick="@DisconnectAsync">Disconnect</a> *@
     }
     @if(playing) {
-    <a class="waves-effect waves-light btn-large" @onclick="@(e => Dealing(true))">Deal w/ Nines</a>
-    <a class="waves-effect waves-light btn-large" @onclick="@(e => Dealing(false))">Deal w/o Nines</a>
+    <a class="waves-effect waves-light btn-large" @onclick="@(e => Dealing(true))">Karten geben</a>
+    @* <a class="waves-effect waves-light btn-large" @onclick="@(e => Dealing(false))">Deal w/o Nines</a> *@
     }
+    @* <p>Alle Spieler: @allplayers</p> *@
+    <p>Alle Spieler: @((MarkupString) string.Format(@allplayersdisplay))</p>
     </div>
     @if (playing) 
     {
@@ -79,6 +81,9 @@ else
 
     bool showLastTrick = false;
     bool showTable = false;
+    
+    string allplayers = "";
+    string allplayersdisplay = "";
 
     bool collapseNavMenu = true;
     
@@ -96,7 +101,7 @@ else
         Console.WriteLine("joining");
         Console.WriteLine(username);
         this.username = player.name;
-
+        
         try
         {
             // remove old messages if any
@@ -128,6 +133,12 @@ else
     /// <param name="e"></param>
     void MessageReceived(object sender, MessageReceivedEventArgs e)
     {
+        if(e.Username == "allplayers")
+        {
+            allplayers = e.Message;
+            allplayersdisplay = allplayers;
+        }
+
         Console.WriteLine($"Blazor: receive {e.Username}: {e.Message}");
         bool isMine = false;
         if (!string.IsNullOrWhiteSpace(e.Username))
@@ -163,6 +174,10 @@ else
         playerlist = GetPlayerList();
         Console.WriteLine(playerlist);
         
+        allplayersdisplay = allplayers;
+        foreach(string p in gameState.UsernameList)
+            allplayersdisplay = allplayersdisplay.Replace(p, "<b>" + p + "</b>");
+
         lastTrick = GetLastTrick();
         allPlayedCards = GetAllPlayedCards();
         showTable = ShowTable();
@@ -341,13 +356,21 @@ else
         if(gameState == null || gameState.PlayerStates == null)
             return startingString;
         if(gameState.StartingPlayer == GetPlayerBottom())
+            startingString[0] = "(sitzt vorne)";
+        if(gameState.StartingPlayer == GetPlayerLeft())
+            startingString[1] = "(sitzt vorne)";
+        if(gameState.StartingPlayer == GetPlayerTop())
+            startingString[2] = "(sitzt vorne)";
+        if(gameState.StartingPlayer == GetPlayerRight())
+            startingString[3] = "(sitzt vorne)";
+        @* if(gameState.StartingPlayer == GetPlayerBottom())
             startingString[0] = "*";
         if(gameState.StartingPlayer == GetPlayerLeft())
             startingString[1] = "*";
         if(gameState.StartingPlayer == GetPlayerTop())
             startingString[2] = "*";
         if(gameState.StartingPlayer == GetPlayerRight())
-            startingString[3] = "*";
+            startingString[3] = "*";             *@
         return startingString;
     }
 
@@ -367,13 +390,13 @@ else
             if(gameState.gamePhase == GameState.GamePhase.Done) {
                 for(int i=0;i<4;i++)
                 {
-                    ps.Add(players[i] + GetStarting()[i] + ": "+ GetPlayerPoints(players[i]));
+                    ps.Add(players[i] + GetStarting()[i] + ": "+ GetPlayerPoints(players[i]) + " Punkte");
                 }
             }
             else {
                 for(int i=0;i<4;i++)
                 {
-                    ps.Add(players[i] + GetStarting()[i] + ": "+ GetPlayerTricks(players[i]));
+                    ps.Add(players[i] + GetStarting()[i] + ": "+ GetPlayerTricks(players[i]) + " Stiche");
                 }
             }        
         }

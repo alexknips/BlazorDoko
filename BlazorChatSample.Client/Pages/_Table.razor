@@ -1,7 +1,7 @@
 ﻿
 
 <div class="top">
-@playerStrings[2]
+<div class="playerstringstyle" style="position:absolute; left: 75%">@playerStrings[2]</div>
 @for (var i = 0;i<cardsTop.Count;i++)
 { 
     var cardIdx = i;
@@ -9,7 +9,7 @@
 }
 </div>
 <div class="left">
-@playerStrings[1]
+<div class="playerstringstyle" style="position:absolute; top: -10%">@playerStrings[1]</div>
 @for (var i = 0;i<cardsLeft.Count;i++)
 { 
     var cardIdx = i;
@@ -42,15 +42,16 @@
     </div>
 </div>
 <div class="right">
-@playerStrings[3]
+<div class="playerstringstyle" style="position:absolute; top: -10%">@playerStrings[3]</div>
 @for (var i = 0;i<cardsRight.Count;i++)
 { 
     var cardIdx = i;
     <img class="rot-playing-card-right" src="cards/green_back_rot.jpg" />
 }
 </div>
+
 <div class="bottom">
-@playerStrings[0]
+<div class="playerstringstyle" style="position:absolute; left: 65%">@playerStrings[0]</div>
 @for (var i = 0;i<cardsBottom.Count;i++)
 { 
     var cardIdx = i;
@@ -64,22 +65,26 @@
 }
 </div>
 <div class="bottomrow">
-<a class="waves-effect waves-light btn-large"  @onclick="@(e => Claiming())">Claim</a>
-<a class="waves-effect waves-light btn-large" @onclick="@(e => ShowLastTrick())">Show last trick</a>
+@* <a class="waves-effect waves-light btn-large"  @onclick="@(e => Claiming())">Claim</a>
+<a class="waves-effect waves-light btn-large" @onclick="@(e => ShowLastTrick())">Show last trick</a> *@
+<a class="waves-effect waves-light btn-large"  @onclick="@(e => Claiming())">Stich beanspruchen</a>
+<a class="waves-effect waves-light btn-large" @onclick="@(e => ShowLastTrick())">Letzten Stich</a>
 @if(tradingPartner == null) {
     @for (var i = 1;i<4;i++)
     { 
         var pId = i;
         <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(playerNames[pId]))">
-            Trade Cards with @playerNames[pId]
+            Trumpfabg. (@playerNames[pId])
         </a>
+        @* Trade Cards with @playerNames[pId] *@
     }
 }
 else
 {
     <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(""))">
-        Stop trading
+        Trumpfabgabe beenden 
     </a>
+    @* Stop trading *@
 }
 </div>
 
