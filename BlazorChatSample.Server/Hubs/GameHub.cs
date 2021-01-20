@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace BlazorChatSample.Server.Hubs
 {
@@ -23,7 +24,6 @@ namespace BlazorChatSample.Server.Hubs
 
         private static GameState gameState;
 
-
         /// <summary>
         /// Send a message to all clients
         /// </summary>
@@ -38,8 +38,25 @@ namespace BlazorChatSample.Server.Hubs
         // Request handout/dealing
         public async Task RequestDealing(string usernameDealer, bool bWithNines)
         {
+            bool bWithNinesServer = bWithNines;
+            if(File.Exists("settings.txt")){
+                string settings = File.ReadAllText("settings.txt");
+                if(settings.ToLower().Contains("withnines"))
+                {
+                    bWithNinesServer = true;
+                }
+                else if(settings.ToLower().Contains("withoutnines"))
+                {
+                    bWithNinesServer = false;
+                }
+                Console.WriteLine("Settings file found. Playing with Nines: " + bWithNinesServer.ToString());
+            }
+            else {
+                Console.WriteLine("No settings file found under "+Path.GetFullPath("settings.txt")+". Playing as requested by user");
+                Console.WriteLine("If overwrite intended: create that file and just write 'withNines' or 'withoutNines' in it");
+            }
             // 1. calculate GameState
-            gameState = new GameState(usernameDealer, userLookup.Values.ToList(), bWithNines);
+            gameState = new GameState(usernameDealer, userLookup.Values.ToList(), bWithNinesServer);
             // 2. return new GameState
             await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
         }
@@ -48,6 +65,15 @@ namespace BlazorChatSample.Server.Hubs
         {
             // 1. calculate GameState
             gameState.CardPlayed(username, card);
+            // 2. return new GameState
+            await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
+        }
+
+        // Sort cards
+        public async Task SortCards(string username, List<int> sortingOrder)
+        {
+            // 1. calculate GameState
+            gameState.CardsResorted(username, sortingOrder);
             // 2. return new GameState
             await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
         }
@@ -74,6 +100,15 @@ namespace BlazorChatSample.Server.Hubs
         {
             // 1. calculate GameState
             gameState.CardOffered(username, receivingUser, card);
+            // 2. return new GameState
+            await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
+        }
+
+        // opens all cards
+        public async Task RevealCards(string username)
+        {
+            // 1. calculate GameState
+            gameState.RevealAllCards(username);
             // 2. return new GameState
             await Clients.All.SendAsync(Messages.UPDATEGAMESTATE, gameState);
         }
@@ -106,7 +141,9 @@ namespace BlazorChatSample.Server.Hubs
             }
 
             string allUsers = "";
-            foreach(Player p in userLookup.Values)
+            List<Player> allUsersList = userLookup.Values.ToList();
+            allUsersList.Sort(Player.Compare);
+            foreach(Player p in allUsersList)
             {
                 allUsers += p.name + " (" + p.seatnumber + "), ";
             }

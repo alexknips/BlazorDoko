@@ -1,19 +1,33 @@
 ﻿
 
+<div class="playerstringstyle" style="width: 100vw;position: relative;left: calc(-50vw + 100%);" >@playerStrings[2]</div>
 <div class="top">
-<div class="playerstringstyle" style="position:absolute; left: 75%">@playerStrings[2]</div>
+@* @playerStrings[2] *@
+@* <div class="playerstringstyle" style="transform:translate(-10px,0px);text-align: right;" >@playerStrings[2]</div> *@
 @for (var i = 0;i<cardsTop.Count;i++)
 { 
     var cardIdx = i;
-    <img class="playing-card" src="cards/green_back.jpg" />
+    @if(revealing) {
+        <img class="playing-card" src="cards/@(cardsTop[i].ToString()).jpg" />
+    }
+    else {
+        <img class="playing-card" src="cards/green_back.jpg" />
+    }
 }
 </div>
 <div class="left">
-<div class="playerstringstyle" style="position:absolute; top: -10%">@playerStrings[1]</div>
+ @* <h6>@playerStrings[1]</h6>  *@
+@* <div class="left"><div class="playerstringstyle" >@playerStrings[1]</div></div> *@
+<div class="playerstringstyle" style="transform:translate(0px,-30px);" >@playerStrings[1]</div>
 @for (var i = 0;i<cardsLeft.Count;i++)
 { 
     var cardIdx = i;
-    <img class="rot-playing-card-left" src="cards/green_back_rot.jpg" />
+    @if(revealing) {
+        <img class="rot-playing-card-left"  style="transform: scale(2.5);"  src="cards/@(cardsLeft[i].ToString()).jpg" />
+    }
+    else {
+        <img class="rot-playing-card-left" src="cards/green_back_rot.jpg" />
+    }
 }
 </div>
 
@@ -42,21 +56,36 @@
     </div>
 </div>
 <div class="right">
-<div class="playerstringstyle" style="position:absolute; top: -10%">@playerStrings[3]</div>
+@* <h6>@playerStrings[3]</h6> *@
+<div class="playerstringstyle" style="transform:translate(0px,30px);" >@playerStrings[3]</div>
+@* <div class="right"><div class="playerstringstyle" >@playerStrings[3]</div></div> *@
 @for (var i = 0;i<cardsRight.Count;i++)
 { 
     var cardIdx = i;
-    <img class="rot-playing-card-right" src="cards/green_back_rot.jpg" />
+    @if(revealing) {
+        <img class="rot-playing-card-right" style="transform: scale(2.5);"src="cards/@(cardsRight[i].ToString()).jpg" />
+    }
+    else {
+        <img class="rot-playing-card-right" src="cards/green_back_rot.jpg" />
+    }
 }
 </div>
 
+@* <div class="playerstringstyle" style="position: relative;left: -50%;top: 80%" >@playerStrings[0]</div> *@
 <div class="bottom">
-<div class="playerstringstyle" style="position:absolute; left: 65%">@playerStrings[0]</div>
+<div class="playerstringstyle" style="transform:translate(-150px,0px);text-align: right;" >@playerStrings[0]</div>
+@* <h6>@playerStrings[0]</h6> *@
+@* <div class="bottom"><div class="playerstringstyle">@playerStrings[0]</div></div> *@
 @for (var i = 0;i<cardsBottom.Count;i++)
 { 
     var cardIdx = i;
     @if(activelyPlaying){
+        @if(cardsBottomMarker.Contains(i)) {
+         //   <img class="my-card" style="color: white" src="cards/@(cardsBottom[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
+        }
+        else {
         <img class="my-card" src="cards/@(cardsBottom[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
+        }
     }
     else
     {
@@ -67,13 +96,14 @@
 <div class="bottomrow">
 @* <a class="waves-effect waves-light btn-large"  @onclick="@(e => Claiming())">Claim</a>
 <a class="waves-effect waves-light btn-large" @onclick="@(e => ShowLastTrick())">Show last trick</a> *@
+@if(cardsBottomMarker.Count == 0) { // show bottom row only if not sorting at the moment
 <a class="waves-effect waves-light btn-large"  @onclick="@(e => Claiming())">Stich beanspruchen</a>
-<a class="waves-effect waves-light btn-large" @onclick="@(e => ShowLastTrick())">Letzten Stich</a>
+<a class="waves-effect waves-light btn-large" @onclick="@(e => ShowLastTrick())">Letzter Stich</a>
 @if(tradingPartner == null) {
     @for (var i = 1;i<4;i++)
     { 
         var pId = i;
-        <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(playerNames[pId]))">
+        <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(playerNames[pId]))" title="@playerNames[pId]">
             Trumpfabg. (@playerNames[pId])
         </a>
         @* Trade Cards with @playerNames[pId] *@
@@ -85,6 +115,7 @@ else
         Trumpfabgabe beenden 
     </a>
     @* Stop trading *@
+}
 }
 </div>
 
@@ -278,6 +309,8 @@ else
     [Parameter]
     public List<BlazorChatSample.Shared.Card> cardsBottom { get; set; }
     [Parameter]
+    public List<int> cardsBottomMarker { get; set; }
+    [Parameter]
     public Dictionary<string, BlazorChatSample.Shared.Card> cardsTable { get; set; }
     [Parameter]
     public bool activelyPlaying { get; set; }
@@ -305,6 +338,9 @@ else
 
     [Parameter]
     public EventCallback<int> ShowLastTrickEvent { get; set; }
+
+    [Parameter]
+    public bool revealing { get; set; }
 
     private async Task ClickCard(int idx)
     {

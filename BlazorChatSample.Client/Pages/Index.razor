@@ -13,24 +13,35 @@ else
     <div class="toprow">
     @if (playing)
     {
-        <p>Verbunden als <b>@username</b></p>
+        @* <p>Verbunden als <b>@username</b></p> *@
         @* <p>You are connected as <b>@username</b></p> *@
         @* <a class="waves-effect waves-light btn-large" @onclick="@DisconnectAsync">Disconnect</a> *@
     }
     @if(playing) {
-    <a class="waves-effect waves-light btn-large" @onclick="@(e => Dealing(true))">Karten geben</a>
+    <a class="waves-effect waves-light btn-large" @onclick="@(e => Dealing(true))">Geben</a>
+        @if(activelyPlaying) {
+            @if(sorting == false) {
+                <a class="waves-effect waves-light btn-large" @onclick="@(e => Sorting(true))">Sortieren</a>
+            }
+            else{
+                <a class="waves-effect waves-light btn-large" @onclick="@(e => Sorting(false))">Sortieren abbrechen</a>
+            }
+            <a class="waves-effect waves-light btn-large" @onclick="@(e => SortingInvert())">Sort. umkehren</a>
+            <a class="waves-effect waves-light btn-large" @onclick="@(e => Reveal())" title="mind. 2 Spieler müssen dies anklicken, um alle Karten zu zeigen">Offenlegen</a>
+        }
     @* <a class="waves-effect waves-light btn-large" @onclick="@(e => Dealing(false))">Deal w/o Nines</a> *@
     }
     @* <p>Alle Spieler: @allplayers</p> *@
-    <p>Alle Spieler: @((MarkupString) string.Format(@allplayersdisplay))</p>
+    <p>Verbunden als <b>@username</b><br/>
+    Alle Spieler: @((MarkupString) string.Format(@allplayersdisplay))</p> 
     </div>
     @if (playing) 
     {
         @if(showTable) {
             <_Table cardsLeft="@cardsLeft" cardsRight="@cardsRight" cardsTop="@cardsTop" 
-            cardsBottom="@cardsBottom" cardsTable="@cardsTable" activelyPlaying="@activelyPlaying" 
+            cardsBottom="@cardsBottom" cardsBottomMarker="@sortingOrder" cardsTable="@cardsTable" activelyPlaying="@activelyPlaying" 
             playerStrings="@playerStrings" playerNames="@playerNames" CardClicked=@ClickCard CardClickedTable=@ClickCardTable
-            tradingPartner="@tradingPartner" TradingEvent=@Trading ClaimingEvent=@Claiming ShowLastTrickEvent=@LastTrick/>
+            tradingPartner="@tradingPartner" TradingEvent=@Trading ClaimingEvent=@Claiming ShowLastTrickEvent=@LastTrick revealing=@revealing/>
         }
         <_Playing showLastTrick="@showLastTrick" lastTrick="@lastTrick" allPlayedCards="@allPlayedCards" />
     }
@@ -60,6 +71,7 @@ else
     string newMessage = null;
 
     string tradingPartner = null;
+    bool revealing = false;
 
     // list of messages in chat
     List<Message> messages = new List<Message>();
@@ -74,6 +86,7 @@ else
     List<Card> cardsRight = new List<Card>();
     List<Card> cardsTop = new List<Card>();
     List<Card> cardsBottom = new List<Card>();
+    List<int> cardsBottomMarker = new List<int>();
     bool activelyPlaying = false;
     Dictionary<string,Card> cardsTable = new Dictionary<string, Card>();
     List<string> playerStrings = new List<string>();
@@ -82,6 +95,9 @@ else
     bool showLastTrick = false;
     bool showTable = false;
     
+    bool sorting = false;
+    List<int> sortingOrder = new List<int>();
+
     string allplayers = "";
     string allplayersdisplay = "";
 
@@ -191,7 +207,33 @@ else
         playerStrings = GetPlayerStrings();
         playerNames = GetPlayerNames();
 
+        
+        if(!(gameState == null || gameState.PlayerStates == null)) {
+            revealing = (gameState.cardsRevealed >= 2); // at least 2 players want to reveal
+        }
+
         StateHasChanged();
+    }
+
+    void Sorting(bool initialize)
+    {
+        sorting = initialize;   // start or stop sorting now?
+        sortingOrder = new List<int>();
+    }
+
+    async Task SortingInvert()
+    {
+        sortingOrder = new List<int>();
+        for(var i=GetOwnCards().Count-1;i>=0;i--)
+            sortingOrder.Add(i);
+        await client.SortCards(sortingOrder);
+        Sorting(false);
+    }
+
+    async Task Reveal()
+    {
+        Console.WriteLine("revealing");
+        await client.RevealAllCards();
     }
 
     async Task Dealing(bool bWithNines)
@@ -204,15 +246,25 @@ else
         await client.Claiming();
     }
     
-    //private async Task ClickCard(int idx)
-    //private async void ClickCard(int idx)
     async Task ClickCard(int idx)
     {
+        if(sorting) {
+            if(!sortingOrder.Contains(idx)) {   // avoid that same card is clicked multiple times (would create multiple of those)
+                sortingOrder.Add(idx);
+            }
+            if(sortingOrder.Count == GetOwnCards().Count)
+            {
+                await client.SortCards(sortingOrder);
+                Sorting(false);
+            }
+        }
+        else {
         if(tradingPartner == null) {
             await client.PlayCard(GetOwnCards()[idx]);
         }
         else {
             await client.OfferCard(tradingPartner, GetOwnCards()[idx]);
+        }
         }
     }
 
@@ -356,13 +408,13 @@ else
         if(gameState == null || gameState.PlayerStates == null)
             return startingString;
         if(gameState.StartingPlayer == GetPlayerBottom())
-            startingString[0] = " (sitzt vorne)";
+            startingString[0] = " (vorne)";
         if(gameState.StartingPlayer == GetPlayerLeft())
-            startingString[1] = " (sitzt vorne)";
+            startingString[1] = " (vorne)";
         if(gameState.StartingPlayer == GetPlayerTop())
-            startingString[2] = " (sitzt vorne)";
+            startingString[2] = " (vorne)";
         if(gameState.StartingPlayer == GetPlayerRight())
-            startingString[3] = " (sitzt vorne)";
+            startingString[3] = " (vorne)";
         return startingString;
     }
 
@@ -382,13 +434,13 @@ else
             if(gameState.gamePhase == GameState.GamePhase.Done) {
                 for(int i=0;i<4;i++)
                 {
-                    ps.Add(players[i] + GetStarting()[i] + ": "+ GetPlayerPoints(players[i]) + " Punkte");
+                    ps.Add(players[i] + GetStarting()[i] + ": "+ GetPlayerPoints(players[i]) + " Punkte  ");
                 }
             }
             else {
                 for(int i=0;i<4;i++)
                 {
-                    ps.Add(players[i] + GetStarting()[i] + ": "+ GetPlayerTricks(players[i]) + " Stiche");
+                    ps.Add(players[i] + GetStarting()[i] + ": "+ GetPlayerTricks(players[i]) + " Stiche  ");
                 }
             }        
         }

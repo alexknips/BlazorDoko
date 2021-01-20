@@ -23,6 +23,7 @@ namespace BlazorChatSample.Shared
             }
         }
 
+        public int cardsRevealed {get; set; }
 
         public List<Card> AllPlayedCards { get; set; }
         // private List<Card> _allPlayedCards;
@@ -48,6 +49,7 @@ namespace BlazorChatSample.Shared
         }
         public GameState(string dealerUsername, List<Player> allusers, bool bWithNines)
         {
+            cardsRevealed = 0;
             allusers.Sort(Player.Compare);
             this.UsernameList = new List<string>();
             foreach(Player p in allusers)
@@ -61,7 +63,7 @@ namespace BlazorChatSample.Shared
                 activePlayers = UsernameList;
                 for(int i=UsernameList.Count;i<4;i++)
                 {
-                    activePlayers.Add("player" + (i+1).ToString());
+                    activePlayers.Add("(Platzhalter) " + (i+1).ToString());
                 }
                 int idxDealer = UsernameList.IndexOf(dealerUsername);
                 int idxStartingPlayer = 0;
@@ -91,9 +93,20 @@ namespace BlazorChatSample.Shared
                 activePlayers.Remove(dealerUsername);
                 activePlayers.Remove(otherPassingPlayer);
             }
-            else if (allusers.Count >= 7)
+            else if (UsernameList.Count == 7)
             {
-                throw new System.NotImplementedException("might follow some day...");
+                activePlayers = UsernameList;
+                int idxDealer = UsernameList.IndexOf(dealerUsername);
+                string otherPassingPlayer = UsernameList[(idxDealer +2)%7];
+                string otherPassingPlayer2 = UsernameList[(idxDealer +4)%7];
+                StartingPlayer = activePlayers[(idxDealer+1)%7];
+                activePlayers.Remove(dealerUsername);
+                activePlayers.Remove(otherPassingPlayer);
+                activePlayers.Remove(otherPassingPlayer2);
+            }
+            else if (allusers.Count >= 8)
+            {
+                throw new System.NotImplementedException("8 players want to play: might follow some day...");
             }
 
             var deck = new Shared.Deck(bWithNines);
@@ -188,6 +201,18 @@ namespace BlazorChatSample.Shared
             var cardToRemove = PlayerStates[fromUser].Hand.First(x=>x.cardColor==card.cardColor&&x.cardType==card.cardType);
             PlayerStates[fromUser].Hand.Remove(cardToRemove);
             PlayerStates[toUser].Hand.Add(new Card(card));
+        }
+        public void CardsResorted(string sortingUser, List<int> sortingOrder)
+        {
+            Card[] oldCards = PlayerStates[sortingUser].Hand.ToArray();
+            PlayerStates[sortingUser].Hand.Clear();
+            for(int i=0;i<sortingOrder.Count;i++)
+                PlayerStates[sortingUser].Hand.Add(oldCards[sortingOrder[i]]);
+        }
+
+        public void RevealAllCards(string requestingUser) {
+            System.Diagnostics.Debug.Write(requestingUser + " wants to reveal all cards");
+            cardsRevealed++;
         }
     }
 

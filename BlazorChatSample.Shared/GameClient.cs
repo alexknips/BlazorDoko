@@ -156,6 +156,10 @@ namespace BlazorChatSample.Shared
             await _hubConnection.SendAsync(Messages.SEND, _username, message);
         }
 
+        public async Task SortCards(List<int> sortingOrder){
+            await _hubConnection.SendAsync(Messages.SORTCARDS, _username, sortingOrder);
+        }
+
         public async Task PlayCard(Card c){
             // Card card = gameState.PlayerStates[_username].Hand[idx];
             Console.WriteLine(_username);
@@ -180,6 +184,10 @@ namespace BlazorChatSample.Shared
 
         public async Task OfferCard(string cardReceiver, Card c){
             await _hubConnection.SendAsync(Messages.TRADING , _username, cardReceiver, c);
+        }
+
+        public async Task RevealAllCards(){
+            await _hubConnection.SendAsync(Messages.REVEALING , _username);
         }
 
         /// <summary>

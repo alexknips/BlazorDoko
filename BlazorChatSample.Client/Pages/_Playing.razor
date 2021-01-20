@@ -2,7 +2,7 @@
 
     <div>
         @if(showLastTrick){
-            <div>Last trick:</div>
+            <div>Letzter Stich:</div>
             @for (var i = 0;i<lastTrick.Count;i++)
             { 
                 var cardIdx = i;
@@ -13,7 +13,7 @@
 
     <div>
         @if(allPlayedCards.Count > 0){
-            <div>Game history:</div>
+            <div>Spielverlauf:</div>
         }
         @for (var i = 0;i<allPlayedCards.Count;i++)
         { 
