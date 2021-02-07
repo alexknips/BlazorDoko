@@ -1,32 +1,76 @@
-﻿<div id="scrollbox">
-
-    <div>
-        @if(showLastTrick){
-            <div>Letzter Stich:</div>
+﻿<div id="scrollbox" width="50%">
+<style>
+div.gallery {
+  margin: 5px;
+  border: 1px solid #ccc;
+  float: left;
+}
+div.galleryselected {
+  margin: 5px;
+  border: 3px solid #c22;
+  float: left;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: 35% auto auto auto auto 35%;
+  grid-gap: 10px;
+  padding: 10px;
+  justify-content: center;
+}
+div.desc {
+  padding: 15px;
+  text-align: center;
+}
+</style>
+    @if(showLastTrick){
+        <div>Letzter Stich:</div>
+        <div class="grid-container">
+            <div></div> 
             @for (var i = 0;i<lastTrick.Count;i++)
             { 
                 var cardIdx = i;
-                <input type="image" src="cards/@(lastTrick[i].ToString()).jpg" width=20%  /> 
+                <div class="gallery"> <img  src="cards/@(lastTrick[i].ToString()).jpg" style="width:100%" /> </div>
             } 
-        }
-    </div>
+            <div></div> 
+        </div>
+        <br />
+        <br />
+    }
 
-    <div>
-        @if(allPlayedCards.Count > 0){
-            <div>Spielverlauf:</div>
-        }
-        @for (var i = 0;i<allPlayedCards.Count;i++)
+<div>
+    @if(allPlayedCards.Count > 0){
+        <div>    gesamter Spielverlauf:</div>
+        @for (var i = 0;i<(allPlayedCards.Count/4);i++)
         { 
-            var cardIdx = i;
-            @if(i % 4 ==0){
-                <br />
-                <br />
+            var stich = i;
+            var stichlabel = stich+1;
+            <p>    @stichlabel. Stich (@allPlayedCardsNames[i*6+4], @allPlayedCardsNames[i*6+5]): </p> 
+            <div class="grid-container">
+            <div></div> 
+            @for (var j = 0;j<4;j++)
+            { 
+                var cardIdx = 4*stich+j;
+                if(allPlayedCardsNames[i*6+j] == allPlayedCardsNames[i*6+4])
+                {
+                    <div class="galleryselected">
+                        <input type="image" src="cards/@(allPlayedCards[cardIdx].ToString()).jpg" style="width:100%"  /> 
+                        <div class="desc">@allPlayedCardsNames[i*6+j]</div>
+                    </div>
+                }
+                else {
+                    <div class="gallery">
+                        <input type="image" src="cards/@(allPlayedCards[cardIdx].ToString()).jpg" style="width:100%"  /> 
+                        <div class="desc">@allPlayedCardsNames[i*6+j]</div>
+                    </div>
+                }
             }
-            <input type="image" src="cards/@(allPlayedCards[i].ToString()).jpg" width=20%  /> 
+            <div></div> 
+            </div>
         } 
-    </div>
+    } 
 </div> 
 
+</div> 
 
 
 @code {
@@ -37,5 +81,7 @@
     public List<BlazorChatSample.Shared.Card> lastTrick { get; set; }
     [Parameter]
     public List<BlazorChatSample.Shared.Card> allPlayedCards { get; set; }
+    [Parameter]
+    public List<string> allPlayedCardsNames { get; set; }
 
 }

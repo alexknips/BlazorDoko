@@ -26,13 +26,8 @@ namespace BlazorChatSample.Shared
         public int cardsRevealed {get; set; }
 
         public List<Card> AllPlayedCards { get; set; }
-        // private List<Card> _allPlayedCards;
-        // public List<Card> AllPlayedCards {get {
-        //     if(gamePhase == GamePhase.Done) // return all played cards after end of game
-        //         return _allPlayedCards;
-        //     return new List<Card>();        // otherwise empty list
-        // }
-        // set {_allPlayedCards = value;}}
+
+        public List<string> AllPlayedCardsNames { get; set; }
 
         public enum GamePhase{
             waitingForStart, Dealt, Playing, Done
@@ -122,6 +117,7 @@ namespace BlazorChatSample.Shared
             }
 
             AllPlayedCards = new List<Card>();
+            AllPlayedCardsNames = new List<string>();
             gamePhase = GamePhase.Dealt;
         }
 
@@ -143,9 +139,13 @@ namespace BlazorChatSample.Shared
             {
                 valueOfTrick += CurrentTrick[players].points;
                 AllPlayedCards.Add(new Card(CurrentTrick[players]));
+                AllPlayedCardsNames.Add(players);
             }
             PlayerStates[claimingPlayer].Points += valueOfTrick;
             PlayerStates[claimingPlayer].numTricks++;
+
+            AllPlayedCardsNames.Add(claimingPlayer);
+            AllPlayedCardsNames.Add(valueOfTrick.ToString());
 
             CurrentTrick = new Dictionary<string, Card>();
 

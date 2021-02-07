@@ -43,9 +43,9 @@ else
             playerStrings="@playerStrings" playerNames="@playerNames" CardClicked=@ClickCard CardClickedTable=@ClickCardTable
             tradingPartner="@tradingPartner" TradingEvent=@Trading ClaimingEvent=@Claiming ShowLastTrickEvent=@LastTrick revealing=@revealing/>
         }
-        <_Playing showLastTrick="@showLastTrick" lastTrick="@lastTrick" allPlayedCards="@allPlayedCards" />
     }
 </div>
+<_Playing showLastTrick="@showLastTrick" lastTrick="@lastTrick" allPlayedCards="@allPlayedCards" allPlayedCardsNames="@allPlayedCardsNames"/>
 }
 
 
@@ -81,6 +81,7 @@ else
 
     List<Card> lastTrick = new List<Card>();
     List<Card> allPlayedCards = new List<Card>();
+    List<string> allPlayedCardsNames = new List<string>();
 
     List<Card> cardsLeft = new List<Card>();
     List<Card> cardsRight = new List<Card>();
@@ -196,6 +197,7 @@ else
 
         lastTrick = GetLastTrick();
         allPlayedCards = GetAllPlayedCards();
+        allPlayedCardsNames = GetAllPlayedCardsNames();
         showTable = ShowTable();
 
         cardsLeft = GetPlayerCards(GetPlayerLeft());
@@ -337,6 +339,14 @@ else
         Console.WriteLine((GameState.GamePhase)gameState.gamePhase);
         Console.WriteLine(gameState.AllPlayedCards.Count);
         return gameState.AllPlayedCards;
+    }
+    public List<string> GetAllPlayedCardsNames()
+    {
+        if(gameState == null || gameState.PlayerStates == null || gameState.gamePhase != GameState.GamePhase.Done)
+            return new List<string>();
+        Console.WriteLine((GameState.GamePhase)gameState.gamePhase);
+        Console.WriteLine(gameState.AllPlayedCardsNames.Count);
+        return gameState.AllPlayedCardsNames;
     }
     public List<Card> GetOwnCards()
     {

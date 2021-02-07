@@ -79,7 +79,7 @@
 @for (var i = 0;i<cardsBottom.Count;i++)
 { 
     var cardIdx = i;
-    @if(activelyPlaying){
+    @if(activelyPlaying || revealing){
         @if(cardsBottomMarker.Contains(i)) {
          //   <img class="my-card" style="color: white" src="cards/@(cardsBottom[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
         }
@@ -97,206 +97,29 @@
 @* <a class="waves-effect waves-light btn-large"  @onclick="@(e => Claiming())">Claim</a>
 <a class="waves-effect waves-light btn-large" @onclick="@(e => ShowLastTrick())">Show last trick</a> *@
 @if(cardsBottomMarker.Count == 0) { // show bottom row only if not sorting at the moment
-<a class="waves-effect waves-light btn-large"  @onclick="@(e => Claiming())">Stich beanspruchen</a>
-<a class="waves-effect waves-light btn-large" @onclick="@(e => ShowLastTrick())">Letzter Stich</a>
-@if(tradingPartner == null) {
-    @for (var i = 1;i<4;i++)
-    { 
-        var pId = i;
-        <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(playerNames[pId]))" title="@playerNames[pId]">
-            Trumpfabg. (@playerNames[pId])
-        </a>
-        @* Trade Cards with @playerNames[pId] *@
+    <a class="waves-effect waves-light btn-large"  @onclick="@(e => Claiming())">Stich beanspruchen</a>
+    <a class="waves-effect waves-light btn-large" @onclick="@(e => ShowLastTrick())">Letzter Stich</a>
+    @if(tradingPartner == null) {
+        @for (var i = 1;i<4;i++)
+        { 
+            var pId = i;
+            <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(playerNames[pId]))" title="@playerNames[pId]">
+                Trumpfabg. (@playerNames[pId])
+            </a>
+            @* Trade Cards with @playerNames[pId] *@
+        }
     }
-}
-else
-{
-    <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(""))">
-        Trumpfabgabe beenden 
-    </a>
-    @* Stop trading *@
-}
+    else
+    {
+        <a class="waves-effect waves-light btn-large" @onclick="@(e => Trading(""))">
+            Trumpfabgabe beenden 
+        </a>
+        @* Stop trading *@
+    }
 }
 </div>
 
  
-  @* <div class="itemLeft">
-        <div class="cardcontainerleft">
-        <div class="containersmall">
-        @playerStrings[1]
-        @for (var i = 0;i<cardsLeft.Count;i++)
-        { 
-            var cardIdx = i;
-            <img class="card" src="cards/green_back.jpg" />
-        }
-        </div>
-        </div>
-  </div>
-  <div class="itemRight">
-        <div class="cardcontainerright">
-        <div class="containersmall">
-        @playerStrings[3]
-        @for (var i = 0;i<cardsRight.Count;i++)
-        { 
-            var cardIdx = i;
-            <img class="card" src="cards/green_back.jpg" />
-        }
-        </div>
-    </div>
-  </div>
-  <div class="itemTop">
-      <div class="cardcontainertop">
-        <div class="containersmall">
-        @playerStrings[2]
-        @for (var i = 0;i<cardsTop.Count;i++)
-        { 
-            var cardIdx = i;
-            <img class="card" src="cards/green_back.jpg" />
-        }
-        </div>
-        </div>
-  </div>
-  <div class="itemBottom">
-    <div class="cardcontainer">
-        @playerStrings[0]
-            @for (var i = 0;i<cardsBottom.Count;i++)
-            { 
-                var cardIdx = i;
-                @if(activelyPlaying){
-                    <div class="card">
-                        <input type="image" src="cards/@(cardsBottom[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
-                    </div>
-                }
-                else
-                {
-                    <img src="cards/green_back.jpg" width=20%  />
-                }
-            }
-    </div>
-
-  </div> *@
-
-@* <div class="container">
-    <div class="row">
-        <div class="col">
-        </div>
-
-        <div class="col-sm">
-            @playerStrings[2]
-            <div class="container">
-                @for (var i = 0;i<cardsTop.Count;i++)
-                { 
-                    var cardIdx = i;
-                    <img class="card" src="cards/green_back.jpg" />
-                }
-            </div>
-        </div>
-
-        <div class="col">
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            @playerStrings[1]
-            <div class="rotate">
-                <div class="container">
-                @for (var i = 0;i<cardsLeft.Count;i++)
-                { 
-                    var cardIdx = i;
-                    <img class="card" src="cards/green_back.jpg" />
-                }
-                </div>
-            </div>
-        </div>
-        <div class="col-sm">
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                    </div>
-                    <div class="col-sm">
-                        <div class="cardtable">
-                        @if(cardsTable.Keys.Contains(playerNames[2])){
-                            <img src="cards/@(cardsTable[playerNames[2]].ToString()).jpg" width=50%  />
-                        }
-                        </div>
-                    </div>
-                    <div class="col">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="cardtable">
-                        @if(cardsTable.Keys.Contains(playerNames[1])){
-                            <img src="cards/@(cardsTable[playerNames[1]].ToString()).jpg" width=50%   />
-                        }
-                        </div>
-                    </div>
-                    <div class="col-sm">
-                    </div>
-                    <div class="col">
-                        <div class="cardtable">
-                        @if(cardsTable.Keys.Contains(playerNames[3])){
-                            <img src="cards/@(cardsTable[playerNames[3]].ToString()).jpg"  />
-                        }
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                    </div>
-                    <div class="col-sm">
-                        <div class="cardtable">
-                        @if(cardsTable.Keys.Contains(playerNames[0])){
-                            <input type="image" src="cards/@(cardsTable[playerNames[0]].ToString()).jpg"  @onclick="@(e => ClickCardTable())"/>
-                        }
-                        </div>
-                    </div>
-                    <div class="col">
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <div class="col">
-            @playerStrings[3]
-            <div class="rotate">
-                <div class="container">
-                @for (var i = 0;i<cardsRight.Count;i++)
-                { 
-                    var cardIdx = i;
-                    <img class="card" src="cards/green_back.jpg" />
-                }
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-        </div>
-        <div class="col-sm">
-            <div class="cardcontainer">
-            @playerStrings[0]
-                <div class="container">
-                @for (var i = 0;i<cardsBottom.Count;i++)
-                { 
-                    var cardIdx = i;
-                    @if(activelyPlaying){
-                        <div class="card">
-                            <input type="image" src="cards/@(cardsBottom[i].ToString()).jpg" @onclick="@(e => ClickCard(cardIdx))" />
-                        </div>
-                    }
-                    else
-                    {
-                        <img src="cards/green_back.jpg" width=20%  />
-                    }
-                } 
-                </div>
-            </div>
-        </div>
-        <div class="col">
-        </div>
-    </div>
-</div> *@
 
 
 @code {
